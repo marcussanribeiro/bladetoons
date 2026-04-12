@@ -18,13 +18,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from backend.url import url_dashboard_cliente
 
 urlpatterns = [
     path('', include('frontend.urls')),
     path('admin/', admin.site.urls),
-    path('api/', include('anime.urls')),
-    path('anime/', include('anime.urls')),
-    path('api/auth/', include('accounts.urls')),
-    path('dashboard/', include('dashboard_cliente.urls')),
+    #path('api/', include('anime.urls')),
+    #path('anime/', include('anime.urls')),
+    #path('api/auth/', include('accounts.urls')),
+    #path('dashboard/', include('dashboard_cliente.urls')),
+    path('api/', include('backend.urls')),
+    path('dashboard/', include('backend.url.url_dashboard_cliente')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

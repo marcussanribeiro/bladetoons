@@ -39,10 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'anime',
-    'accounts',
+    #'anime',
+    #'accounts',
     'frontend',
-    'dashboard_cliente',
+    #'dashboard_cliente',
     'backend',
 ]
 

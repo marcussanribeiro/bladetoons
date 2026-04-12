@@ -1,145 +1,116 @@
         {% block content %}
-{% load static %}
 
-
+        
 
 <header class="bg-black/80 backdrop-blur border-b border-gray-800 sticky top-0 z-50">
 
-  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between relative">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center relative">
 
     <!-- LOGO -->
-     <a href="{% url 'home' %}">
     <div class="h-12 flex items-center z-10">
-      
-      <img src="/media/imagens_layout/bladetoons-logo.png"
-           class="h-[80%] object-contain">
-           
-    </div>
-    </a>
-
-    <!-- MENU CENTRAL -->
-<!-- CENTRO (MENU + SEARCH JUNTOS) -->
-<div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-6">
-
-  <!-- MENU -->
-  <nav id="mainMenu"
-       class="flex items-center space-x-6 text-sm">
-
-       {% if request.session.user_id %}
-    <a href="{% url 'dashboard' %}" class="hover:text-fire transition">Area do Cliente</a>
-    {% endif %}
-    <a href="{% url 'home' %}" class="hover:text-fire transition">Home</a>
-    <a href="#" class="hover:text-fire transition">Obras</a>
-    <a href="#" class="hover:text-fire transition">VIP</a>
-    <a href="#" class="hover:text-fire transition">Loja</a>
-    <a href="#" class="hover:text-fire transition">Comunidade</a>
-    <a href="#" class="hover:text-fire transition">Ajuda</a>
-
-  </nav>
-
-  <!-- SEARCH -->
-  <div class="flex items-center gap-2">
-
-    <div id="searchBox"
-         class="w-0 overflow-hidden transition-all duration-300">
-
-      <input id="searchInput"
-             type="text"
-             placeholder="Buscar..."
-             class="bg-gray-900 text-sm px-3 py-2 rounded-lg focus:outline-none border border-gray-700 focus:border-fire w-[300px]">
+      <img src="/media/imagens_layout/bladetoons-logo.png" class="h-8 md:h-10 object-contain">
     </div>
 
-    <button id="searchBtn"
-            class="text-gray-400 hover:text-fire transition flex items-center justify-center w-8 h-8">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="2"
-           stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"></circle>
-        <path d="m21 21-4.35-4.35"></path>
-      </svg>
-    </button>
+    <!-- CENTRO (MENU + SEARCH ORGANIZADO) -->
+    <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-4">
 
-  </div>
+      <!-- MENU -->
+      <nav id="mainMenu" class="flex items-center space-x-5 text-sm whitespace-nowrap">
 
-</div>
+        <a href="#" class="hover:text-fire transition">Home</a>
+        <a href="#" class="hover:text-fire transition">Obras</a>
+        <a href="#" class="hover:text-fire transition">VIP</a>
+        <a href="#" class="hover:text-fire transition">Loja</a>
+        <a href="#" class="hover:text-fire transition">Comunidade</a>
+        <a href="#" class="hover:text-fire transition">Ajuda</a>
+
+      </nav>
+
+      <div class="flex items-center gap-2">
+
+        <div id="searchBox"
+             class="w-0 overflow-hidden transition-all duration-300">
+
+          <input id="searchInput" type="text" placeholder="Buscar..." class="bg-gray-900 text-sm px-3 py-2 rounded-lg focus:outline-none border border-gray-700 focus:border-fire w-[300px]">
+        </div>
+
+        <button id="searchBtn"
+                class="text-gray-400 hover:text-fire transition flex items-center justify-center w-8 h-8">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
+
+      </div>
+
+    </div>
 
     <!-- DIREITA -->
-    <div class="flex items-center gap-4 z-10 ml-auto">
+     {% if request.session.user_id %}
+     <!-- MOEDAS -->
+      <div class="hidden md:flex items-center gap-1 bg-gray-900 px-2 py-1 rounded-lg border border-gray-700">
+        <img src="/media/imagens_layout/coin.png" 
+             class="h-4 w-4 object-contain">
+        <span class="text-sm font-semibold">120</span>
+      </div>
 
-      <!-- BUSCA -->
+      <!-- PERFIL -->
+      <div class="relative">
 
+  <!-- BOTÃO USER -->
+  <div id="userMenuBtn"
+       class="flex items-center gap-2 cursor-pointer group">
 
-      {% if request.session.user_id %}
+    <img src="/media/imagens_layout/user.png"
+         class="w-10 h-10 rounded-full object-cover border border-gray-700 group-hover:border-fire transition">
 
-        <!-- MOEDAS -->
-        <div class="hidden md:flex items-center gap-1 bg-gray-900 px-2 py-1 rounded-lg border border-gray-700">
-          <img src="/media/imagens_layout/coin.png"
-               class="h-4 w-4 object-contain">
-          <span class="text-sm font-semibold">120</span>
-        </div>
+    <div class="hidden md:flex flex-col leading-tight">
+      <span class="text-sm group-hover:text-fire">
+        {{ user.username }}
+      </span>
 
-        <!-- PERFIL -->
-        <div class="relative">
-
-          <div id="userMenuBtn"
-               class="flex items-center gap-2 cursor-pointer group">
-
-            <img src="/media/imagens_layout/user.png"
-                 class="w-10 h-10 rounded-full object-cover border border-gray-700 group-hover:border-fire transition">
-
-            <div class="hidden md:flex flex-col leading-tight">
-              <span class="text-sm group-hover:text-fire">
-                {{ user.username }}
-              </span>
-
-              <span class="text-[10px] font-semibold flex justify-center items-center gap-1 w-full">
-                {% if user.vip %}
-                  <span class="text-yellow-400">💎 VIP</span>
-                {% else %}
-                  <span class="text-gray-400">Free</span>
-                {% endif %}
-              </span>
-            </div>
-
-          </div>
-
-          <!-- DROPDOWN -->
-          <div id="userDropdown"
-               class="hidden absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
-
-            <a href="{% url 'logout' %}"
-               class="block px-4 py-2 text-sm hover:bg-gray-800 hover:text-fire transition">
-              🚪 Logout
-            </a>
-
-          </div>
-
-        </div>
-
-      {% else %}
-
-        <!-- LOGIN / REGISTRO -->
-        <div class="flex items-center gap-3">
-
-          <a href="#"
-             id="openRegisterModal"
-             class="border border-fire px-3 py-1.5 rounded-lg text-xs md:text-sm hover:bg-fire hover:text-black transition">
-            Registrar
-          </a>
-
-          <a href="#"
-             id="openLoginModal"
-             class="bg-fire px-3 py-1.5 rounded-lg text-xs md:text-sm hover:opacity-80">
-            Login
-          </a>
-
-        </div>
-
-      {% endif %}
-
+<span class="text-[10px] font-semibold flex justify-center items-center gap-1 w-full">
+  {% if user.vip %}
+    <span class="text-yellow-400">💎 VIP</span>
+  {% else %}
+    <span class="text-gray-400">Free</span>
+  {% endif %}
+</span>
     </div>
+  </div>
+
+  <!-- SUBMENU -->
+  <div id="userDropdown"
+       class="hidden absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
+
+    <a href="{% url 'logout' %}"
+       class="block px-4 py-2 text-sm hover:bg-gray-800 hover:text-fire transition">
+       🚪 Logout
+    </a>
 
   </div>
+
+     {% else %}
+    <div class="ml-auto flex items-center gap-3 z-10">
+
+      <button id="menuBtn" class="md:hidden text-fire">☰</button>
+
+      <a href="#" id="openRegisterModal"
+         class="border border-fire px-3 py-1.5 rounded-lg text-xs md:text-sm hover:bg-fire hover:text-black transition">
+        Registrar
+      </a>
+
+      <a href="{#{% url 'login' %}#}" id="openLoginModal"
+         class="bg-fire px-3 py-1.5 rounded-lg text-xs md:text-sm hover:opacity-80">
+        Login
+      </a>
+
+    </div>
+    {% endif %}
+
 
 </header>
 
@@ -261,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const formData = new FormData(form);
 
-    fetch("{% url 'api:login' %}", {
+    fetch("{% url 'login' %}", {
       method: "POST",
       body: formData,
       headers: {
@@ -564,26 +535,27 @@ document.addEventListener('click', (e) => {
   }
 });
 </script>
+
 <script>
-              document.addEventListener('DOMContentLoaded', function () {
-                const btn = document.getElementById('userMenuBtn');
-                const menu = document.getElementById('userDropdown');
+document.addEventListener('DOMContentLoaded', function () {
+  const btn = document.getElementById('userMenuBtn');
+  const menu = document.getElementById('userDropdown');
 
-                // evita erro se não existir na página
-                if (!btn || !menu) return;
+  // evita erro se não existir na página
+  if (!btn || !menu) return;
 
-                btn.addEventListener('click', function (e) {
-                  e.stopPropagation(); // evita fechar imediatamente
-                  menu.classList.toggle('hidden');
-                });
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation(); // evita fechar imediatamente
+    menu.classList.toggle('hidden');
+  });
 
-                // fechar ao clicar fora
-                document.addEventListener('click', function (e) {
-                  if (!btn.contains(e.target) && !menu.contains(e.target)) {
-                    menu.classList.add('hidden');
-                  }
-                });
-              });
+  // fechar ao clicar fora
+  document.addEventListener('click', function (e) {
+    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+      menu.classList.add('hidden');
+    }
+  });
+});
 </script>
 
      {% endblock %}
