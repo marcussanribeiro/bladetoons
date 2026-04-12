@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bladetoons</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { fire: '#ff5a1f' }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-black text-white font-sans">
+
+<!-- HEADER -->
+<header class="bg-black/80 backdrop-blur border-b border-gray-800 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+
+    <!-- LOGO -->
+    <img src="/media/imagens_layout/bladetoons-logo.png" 
+         class="h-8 md:h-10 object-contain">
+
+    <!-- MENU -->
+    <nav class="hidden md:flex space-x-6 text-sm">
+      <a href="#" class="hover:text-fire">Home</a>
+      <a href="#" class="hover:text-fire">Obras</a>
+      <a href="#" class="hover:text-fire">Trending</a>
+      <a href="#" class="hover:text-fire">VIP</a>
+      <a href="#" class="hover:text-fire">Loja</a>
+    </nav>
+
+    <!-- AÇÕES -->
+    <div class="flex items-center gap-3">
+      <div class="relative hidden md:block">
+        <input type="text" placeholder="Buscar..."
+          class="bg-gray-900 text-sm px-3 py-1.5 rounded-lg focus:outline-none">
+        <span class="absolute right-2 top-1.5 text-gray-400">🔍</span>
+      </div>
+
+      <button id="menuBtn" class="md:hidden text-fire">☰</button>
+
+      <a href="#" class="border border-fire px-3 py-1.5 rounded-lg text-xs md:text-sm hover:bg-fire hover:text-black transition">
+        Registrar
+      </a>
+
+      <a href="#" class="bg-fire px-3 py-1.5 rounded-lg text-xs md:text-sm hover:opacity-80">
+        Login
+      </a>
+    </div>
+
+  </div>
+
+  <!-- MOBILE -->
+  <div id="mobileMenu" class="hidden md:hidden px-4 pb-4 space-y-2">
+    <input type="text" placeholder="Buscar..." class="w-full bg-gray-900 px-3 py-2 rounded-lg text-sm">
+    <a href="#" class="block py-2">Home</a>
+    <a href="#" class="block py-2">Obras</a>
+    <a href="#" class="block py-2">Trending</a>
+    <a href="#" class="block py-2">VIP</a>
+    <a href="#" class="block py-2">Loja</a>
+  </div>
+</header>
+
+<!-- CARROSSEL -->
+<section class="relative h-[300px] md:h-[500px] overflow-hidden">
+
+  <div class="absolute inset-0">
+
+    <!-- SLIDE 1 -->
+    <div class="slide absolute w-full h-full opacity-100 transition duration-700">
+      <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+           class="w-full h-full object-cover">
+
+      <div class="absolute inset-0 bg-black/70 flex items-end">
+        <div class="p-6 md:p-10 max-w-xl">
+          <h2 class="text-3xl md:text-5xl font-bold text-fire mb-3">Link Click</h2>
+          <p class="text-gray-300 text-sm md:text-base">
+            Dois jovens entram em fotos para alterar o passado — mas cada mudança pode destruir o futuro.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div class="slide absolute w-full h-full opacity-0 transition duration-700">
+      <img src="https://cinema10.com.br/upload/series/series_4629_nqy6g0rin2ge1-easy-resize.com.jpg"
+           class="w-full h-full object-cover">
+
+      <div class="absolute inset-0 bg-black/70 flex items-end">
+        <div class="p-6 md:p-10 max-w-xl">
+          <h2 class="text-3xl md:text-5xl font-bold text-fire mb-3">Jujutsu Kaisen</h2>
+          <p class="text-gray-300 text-sm md:text-base">
+            Um estudante entra no mundo das maldições após consumir um objeto proibido.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div class="slide absolute w-full h-full opacity-0 transition duration-700">
+      <img src="https://i.pinimg.com/736x/40/93/dc/4093dc75c4d6241089ee8584a08f3b68.jpg"
+           class="w-full h-full object-cover">
+
+      <div class="absolute inset-0 bg-black/70 flex items-end">
+  <div class="flex items-end gap-4 p-6 md:p-10 max-w-xl">
+
+    <!-- CAPA PEQUENA -->
+    <img src="https://i.pinimg.com/736x/40/93/dc/4093dc75c4d6241089ee8584a08f3b68.jpg"
+         class="w-16 md:w-20 h-24 md:h-28 object-cover rounded-lg shadow-lg border border-gray-700">
+
+    <!-- TEXTO -->
+    <div>
+      <h2 class="text-3xl md:text-5xl font-bold text-fire mb-2">Demon Slayer</h2>
+      <p class="text-gray-300 text-sm md:text-base">
+        Um jovem caçador enfrenta demônios para salvar sua irmã e restaurar sua humanidade.
+      </p>
+    </div>
+
+  </div>
+</div>
+    </div>
+
+  </div>
+
+  <!-- DOTS -->
+  <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-3">
+    <button class="dot w-3 h-3 rounded-full bg-fire"></button>
+    <button class="dot w-3 h-3 rounded-full bg-white/40"></button>
+    <button class="dot w-3 h-3 rounded-full bg-white/40"></button>
+  </div>
+
+</section>
+
+<!-- CONTEÚDO (RESUMIDO) -->
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <h3 class="text-xl md:text-2xl font-bold text-fire mb-6">⭐ Obras em Destaque</h3>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-gray-900 rounded-xl p-4">Conteúdo...</div>
+    <div class="bg-gray-900 rounded-xl p-4">Conteúdo...</div>
+    <div class="bg-gray-900 rounded-xl p-4">Conteúdo...</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-gray-800 text-center py-4 text-xs">
+  <p class="text-gray-500">© 2026 Bladetoons</p>
+</footer>
+
+<!-- SCRIPT -->
+<script>
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot');
+
+let current = 0;
+let interval;
+
+function showSlide(index) {
+  slides.forEach((slide, i) => {
+    slide.classList.add('opacity-0');
+    slide.classList.remove('opacity-100');
+
+    dots[i].classList.remove('bg-fire');
+    dots[i].classList.add('bg-white/40');
+  });
+
+  slides[index].classList.remove('opacity-0');
+  slides[index].classList.add('opacity-100');
+
+  dots[index].classList.remove('bg-white/40');
+  dots[index].classList.add('bg-fire');
+
+  current = index;
+}
+
+function startSlider() {
+  interval = setInterval(() => {
+    let next = (current + 1) % slides.length;
+    showSlide(next);
+  }, 4000);
+}
+
+dots.forEach((dot, index) => {
+  dot.addEventListener('click', () => {
+    showSlide(index);
+    clearInterval(interval);
+    startSlider();
+  });
+});
+
+showSlide(0);
+startSlider();
+
+// MOBILE MENU
+const btn = document.getElementById('menuBtn');
+const menu = document.getElementById('mobileMenu');
+btn.onclick = () => menu.classList.toggle('hidden');
+</script>
+
+</body>
+</html>

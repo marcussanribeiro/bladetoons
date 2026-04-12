@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obra - BladeToons</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --fire: #ff4d1a;
+      --fire-dark: #e63e10;
+    }
+
+    .text-fire { color: var(--fire); }
+    .bg-fire { background-color: var(--fire); }
+    .border-fire { border-color: var(--fire); }
+  </style>
+</head>
+
+<body class="bg-black text-white font-sans">
+
+<!-- HEADER -->
+<header class="border-b border-gray-800 bg-black/90 backdrop-blur sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+
+    <div class="text-fire font-bold text-xl">BladeToons</div>
+
+    <nav class="hidden md:flex gap-6 text-sm text-gray-300">
+      <a href="#" class="hover:text-fire transition">Home</a>
+      <a href="#" class="hover:text-fire transition">Obras</a>
+      <a href="#" class="hover:text-fire transition">VIP</a>
+      <a href="#" class="hover:text-fire transition">Loja</a>
+    </nav>
+
+    <button class="bg-fire hover:opacity-90 px-4 py-1.5 rounded-lg text-sm font-semibold text-black">
+      Login
+    </button>
+
+  </div>
+</header>
+
+<!-- HERO OBRA -->
+<section class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+
+  <!-- CAPA -->
+  <div class="md:col-span-1">
+
+    <div class="rounded-xl overflow-hidden border border-gray-800 shadow-lg">
+      <img src="https://i.pinimg.com/736x/40/93/dc/4093dc75c4d6241089ee8584a08f3b68.jpg"
+           class="w-full object-cover">
+    </div>
+
+    <button class="w-full mt-4 bg-fire hover:bg-[var(--fire-dark)] text-black font-bold py-3 rounded-lg transition">
+      ▶ Ler Agora
+    </button>
+
+    <button class="w-full mt-2 border border-gray-700 hover:border-fire py-3 rounded-lg text-sm transition">
+      ☆ Favoritar
+    </button>
+
+  </div>
+
+  <!-- INFO -->
+  <div class="md:col-span-2 space-y-5">
+
+    <h1 class="text-3xl font-bold">Attack on Titan</h1>
+
+    <p class="text-gray-400 text-sm leading-relaxed">
+      Em um mundo cercado por muralhas, a humanidade luta pela sobrevivência contra criaturas gigantes...
+    </p>
+
+    <!-- TAGS -->
+    <div class="flex flex-wrap gap-2 text-xs">
+      <span class="bg-gray-900 border border-gray-800 px-3 py-1 rounded-full hover:border-fire">Ação</span>
+      <span class="bg-gray-900 border border-gray-800 px-3 py-1 rounded-full hover:border-fire">Drama</span>
+      <span class="bg-gray-900 border border-gray-800 px-3 py-1 rounded-full hover:border-fire">Suspense</span>
+    </div>
+
+    <!-- STATS -->
+    <div class="grid grid-cols-3 gap-4 mt-6">
+
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+        <p class="text-fire font-bold text-lg">20K</p>
+        <p class="text-xs text-gray-400">Views</p>
+      </div>
+
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+        <p class="text-fire font-bold text-lg">12</p>
+        <p class="text-xs text-gray-400">Capítulos</p>
+      </div>
+
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+        <p class="text-fire font-bold text-lg">9.8</p>
+        <p class="text-xs text-gray-400">Nota</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CAPÍTULOS -->
+<section class="max-w-7xl mx-auto px-4 py-8">
+
+  <h2 class="text-xl font-bold text-fire mb-4">📚 Capítulos</h2>
+
+  <div class="space-y-2">
+
+    <div class="flex justify-between items-center bg-gray-900 border border-gray-800 p-3 rounded-lg hover:border-fire transition">
+      <span>Capítulo 1</span>
+      <span class="text-xs text-gray-500">2 dias atrás</span>
+    </div>
+
+    <div class="flex justify-between items-center bg-gray-900 border border-gray-800 p-3 rounded-lg hover:border-fire transition">
+      <span>Capítulo 2</span>
+      <span class="text-xs text-gray-500">1 dia atrás</span>
+    </div>
+
+    <div class="flex justify-between items-center bg-gray-900 border border-gray-800 p-3 rounded-lg hover:border-fire transition">
+      <span>Capítulo 3</span>
+      <span class="text-xs text-gray-500">Hoje</span>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- TRENDING -->
+<section class="max-w-7xl mx-auto px-4 py-10">
+
+  <h2 class="text-xl font-bold text-fire mb-4">🔥 Trending</h2>
+
+  <div class="flex gap-4 overflow-x-auto">
+
+    <div class="min-w-[160px] bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-fire transition">
+      <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+           class="h-[200px] w-full object-cover">
+      <div class="p-2">
+        <p class="font-bold text-sm">Naruto</p>
+        <p class="text-xs text-fire">🔥 12k views</p>
+      </div>
+    </div>
+
+    <div class="min-w-[160px] bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-fire transition">
+      <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+           class="h-[200px] w-full object-cover">
+      <div class="p-2">
+        <p class="font-bold text-sm">Jujutsu</p>
+        <p class="text-xs text-fire">🔥 9k views</p>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-gray-800 text-center py-6 text-xs text-gray-500">
+  © 2026 BladeToons
+</footer>
+
+</body>
+</html>

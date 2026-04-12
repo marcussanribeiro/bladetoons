@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revista Anime</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            fire: '#ff5a1f'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-black text-white font-sans">
+
+  <!-- HEADER -->
+  <header class="bg-black border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-fire">ANIME MAG</h1>
+      <nav class="space-x-6">
+        <a href="#" class="hover:text-fire">Home</a>
+        <a href="#" class="hover:text-fire">Notícias</a>
+        <a href="#" class="hover:text-fire">Reviews</a>
+        <a href="#" class="hover:text-fire">Top Animes</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="relative h-[400px] flex items-center justify-center text-center">
+    <img src="https://images.unsplash.com/photo-1608889175315-7b45a4c92a68" class="absolute w-full h-full object-cover opacity-40">
+    <div class="relative z-10">
+      <h2 class="text-4xl md:text-5xl font-bold text-fire">Destaque da Semana</h2>
+      <p class="mt-4 text-gray-300">Os melhores animes que você precisa assistir</p>
+      <button class="mt-6 bg-fire px-6 py-2 rounded-lg hover:opacity-80">Ver agora</button>
+    </div>
+  </section>
+
+  <!-- GRID DE POSTS -->
+  <main class="max-w-7xl mx-auto px-4 py-10">
+    <h3 class="text-2xl font-semibold mb-6 text-fire">Últimos Posts</h3>
+
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <!-- CARD -->
+      <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:scale-105 transition">
+        <img src="https://images.unsplash.com/photo-1580136579312-94651dfd596d" class="w-full h-48 object-cover">
+        <div class="p-4">
+          <h4 class="text-lg font-bold">Attack on Titan Final</h4>
+          <p class="text-gray-400 text-sm mt-2">O desfecho épico que dividiu opiniões...</p>
+          <p class="text-fire text-sm mt-3">🔥 12.450 views</p>
+        </div>
+      </div>
+
+      <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:scale-105 transition">
+        <img src="https://images.unsplash.com/photo-1599507593499-a3f7d7d97667" class="w-full h-48 object-cover">
+        <div class="p-4">
+          <h4 class="text-lg font-bold">Jujutsu Kaisen</h4>
+          <p class="text-gray-400 text-sm mt-2">Análise completa da nova temporada...</p>
+          <p class="text-fire text-sm mt-3">🔥 9.870 views</p>
+        </div>
+      </div>
+
+      <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:scale-105 transition">
+        <img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee" class="w-full h-48 object-cover">
+        <div class="p-4">
+          <h4 class="text-lg font-bold">Demon Slayer</h4>
+          <p class="text-gray-400 text-sm mt-2">Vale a pena assistir o novo arco?</p>
+          <p class="text-fire text-sm mt-3">🔥 15.230 views</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- SIDEBAR + CONTEÚDO -->
+  <section class="max-w-7xl mx-auto px-4 pb-10 grid md:grid-cols-4 gap-6">
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="md:col-span-3 space-y-6">
+      <div>
+        <h3 class="text-xl font-semibold mb-4 text-fire">Artigo em Destaque</h3>
+        <div class="bg-gray-900 p-6 rounded-2xl">
+          <h4 class="text-2xl font-bold">Top 10 Animes de 2025</h4>
+          <p class="text-gray-400 mt-4">Uma lista atualizada com os melhores animes do ano, baseada em crítica e popularidade.</p>
+          <p class="text-fire text-sm mt-3">🔥 22.540 views</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="space-y-6">
+
+      <!-- CATEGORIAS -->
+      <div>
+        <h3 class="text-xl font-semibold mb-4 text-fire">Categorias</h3>
+        <ul class="space-y-2">
+          <li class="hover:text-fire cursor-pointer">Ação</li>
+          <li class="hover:text-fire cursor-pointer">Aventura</li>
+          <li class="hover:text-fire cursor-pointer">Romance</li>
+          <li class="hover:text-fire cursor-pointer">Fantasia</li>
+        </ul>
+      </div>
+
+      <!-- RANKING TOP REVISTAS -->
+      <div>
+        <h3 class="text-xl font-semibold mb-4 text-fire">🔥 Mais Lidas</h3>
+        <div class="bg-gray-900 p-4 rounded-2xl space-y-3">
+
+          {% for revista in mais_vistas %}
+          <div class="flex justify-between">
+            <span>#{{ forloop.counter }} {{ revista.titulo }}</span>
+            <span class="text-fire">🔥 {{ revista.views }} views</span>
+          </div>
+          {% empty %}
+          <p class="text-gray-400 text-sm">Nenhuma revista ainda.</p>
+          {% endfor %}
+
+        </div>
+      </div>
+
+    </aside>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-black border-t border-gray-800 text-center py-6">
+    <p class="text-gray-500">© 2026 Anime Mag - Todos os direitos reservados</p>
+  </footer>
+
+</body>
+</html>

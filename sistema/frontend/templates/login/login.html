@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Bladetoons</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = { 
+      theme: { 
+        extend: { 
+          colors: { fire: '#ff5a1f' } 
+        } 
+      } 
+    }
+  </script>
+</head>
+
+<body class="bg-black text-white font-sans">
+
+<!-- HEADER (mesmo padrão) -->
+<header class="bg-black/80 backdrop-blur border-b border-gray-800 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+
+    <!-- LOGO -->
+    <div class="h-12 flex items-center">
+      <img src="/media/imagens_layout/bladetoons-logo.png" 
+           class="h-[80%] object-contain">
+    </div>
+
+    <a href="#" class="text-sm hover:text-fire">Voltar</a>
+  </div>
+</header>
+
+<!-- LOGIN -->
+<section class="min-h-[90vh] flex items-center justify-center px-4">
+
+  <div class="w-full max-w-md bg-gray-900/80 backdrop-blur p-8 rounded-2xl border border-gray-800 shadow-lg">
+
+    <h2 class="text-2xl font-bold text-fire mb-6 text-center">
+      Entrar na sua conta
+    </h2>
+
+    <form method="POST" class="space-y-4">
+      {% csrf_token %}
+
+      <!-- EMAIL -->
+      <div>
+        <label class="text-sm text-gray-400">Email</label>
+        <input type="email" name="email" class="w-full mt-1 px-3 py-2 bg-black border border-gray-700 rounded-lg focus:outline-none focus:border-fire">
+      </div>
+
+      <!-- SENHA -->
+      <div>
+        <label class="text-sm text-gray-400">Senha</label>
+        <input type="password" name="password"
+          class="w-full mt-1 px-3 py-2 bg-black border border-gray-700 rounded-lg focus:outline-none focus:border-fire">
+      </div>
+
+      <!-- LEMBRAR -->
+      <div class="flex items-center justify-between text-sm">
+        <label class="flex items-center gap-2">
+          <input type="checkbox" class="accent-fire">
+          Lembrar de mim
+        </label>
+
+        <a href="#" class="text-gray-400 hover:text-fire">
+          Esqueceu a senha?
+        </a>
+      </div>
+
+      <!-- BOTÃO -->
+      <button type="submit" class="w-full bg-fire py-2 rounded-lg font-semibold hover:opacity-90 transition">
+        Entrar
+      </button>
+
+          {% if messages %}
+        {% for message in messages %}
+            <p style="color:red">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+      <!-- DIVISOR -->
+      <div class="text-center text-gray-500 text-sm">ou</div>
+
+      <!-- REGISTRO -->
+      <a href="#"
+        class="block text-center border border-fire py-2 rounded-lg hover:bg-fire hover:text-black transition">
+        Criar conta
+      </a>
+
+    </form>
+
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-gray-800 text-center py-4 text-xs">
+  <p class="text-gray-500">© 2026 Bladetoons</p>
+</footer>
+
+</body>
+</html>
