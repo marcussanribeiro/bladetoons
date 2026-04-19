@@ -1,11 +1,38 @@
 from django.contrib import admin
-from backend.model.model_anime import Anime, Genero
 from django.utils.html import format_html
 
+from backend.model.model_anime import Anime, Genero, Volume, Capitulo
+
+
+# 🔥 INLINE DE CAPÍTULOS (dentro do Volume)
+class CapituloInline(admin.TabularInline):
+    model = Capitulo
+    extra = 0
+    fields = ('numero', 'titulo', 'pdf', 'visualizacoes')
+    readonly_fields = ('visualizacoes',)
+
+
+# 🔥 ADMIN DE VOLUME (com capítulos dentro)
+@admin.register(Volume)
+class VolumeAdmin(admin.ModelAdmin):
+    list_display = ('anime', 'numero')
+    search_fields = ('anime__titulo',)
+    inlines = [CapituloInline]
+
+
+# 🔥 INLINE DE VOLUMES (dentro do Anime)
+class VolumeInline(admin.TabularInline):
+    model = Volume
+    extra = 0
+    fields = ('numero',)
+
+
+# 🔥 ADMIN DE ANIME
 @admin.register(Anime)
 class AnimeAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'ver_pdf')
     search_fields = ('titulo',)
+    inlines = [VolumeInline]
 
     def ver_pdf(self, obj):
         volume = obj.volumes.first()
@@ -24,6 +51,15 @@ class AnimeAdmin(admin.ModelAdmin):
     ver_pdf.short_description = "PDF"
 
 
+# 🔥 ADMIN DE CAPÍTULO (opcional, mas útil)
+@admin.register(Capitulo)
+class CapituloAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'numero', 'volume', 'visualizacoes')
+    search_fields = ('titulo',)
+    list_filter = ('volume',)
+
+
+# 🔥 ADMIN DE GÊNERO
 @admin.register(Genero)
 class GeneroAdmin(admin.ModelAdmin):
     list_display = ('nome',)

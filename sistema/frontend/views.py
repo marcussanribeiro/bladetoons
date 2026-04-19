@@ -96,7 +96,7 @@ def registrar(request):
         'anime': anime
     })"""
 
-def obra(request, slug):
+"""def obra(request, slug):
     user = UsuarioCustom.objects.filter(
         id=request.session.get('user_id')
     ).first()
@@ -113,4 +113,32 @@ def obra(request, slug):
     return render(request, 'anime/layout_anime.html', {
         'user': user,
         'anime': anime
+    })"""
+
+def obra(request, slug):
+    user = UsuarioCustom.objects.filter(
+        id=request.session.get('user_id')
+    ).first()
+
+    anime = get_object_or_404(
+        Anime.objects.prefetch_related('generos'),
+        slug=slug
+    )
+
+    # 🔥 PEGAR GÊNEROS DO ANIME ATUAL
+    generos = anime.generos.all()
+
+    # 🔥 SUGERIDOS
+    sugeridos = Anime.objects.filter(
+        generos__in=generos
+    ).exclude(
+        id=anime.id
+    ).distinct().annotate(
+        match_count=Count('generos')
+    ).order_by('-match_count')[:8]  # limite
+
+    return render(request, 'anime/layout_anime.html', {
+        'user': user,
+        'anime': anime,
+        'sugeridos': sugeridos
     })
