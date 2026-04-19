@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password, check_password
+from backend.model.model_anime import Capitulo
 
 class Grupo(models.Model):
     nome = models.CharField(max_length=50)
@@ -49,3 +50,14 @@ class UsuarioCustom(models.Model):
 
     def __str__(self):
         return self.username
+    
+
+
+class CapituloLido(models.Model):
+    user = models.ForeignKey(UsuarioCustom, on_delete=models.CASCADE)
+    capitulo = models.ForeignKey('Capitulo', on_delete=models.CASCADE)
+    lido = models.BooleanField(default=False)
+    data_leitura = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'capitulo')

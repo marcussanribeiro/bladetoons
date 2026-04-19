@@ -20,223 +20,217 @@
   </style>
 </head>
 
-<body class="bg-black text-white font-sans">
+<body class="bg-black text-white font-sans min-h-screen flex flex-col">
 
-<!-- HEADER -->
-<!--<header class="border-b border-gray-800 bg-black/90 backdrop-blur sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-
-    <div class="text-fire font-bold text-xl">BladeToons</div>
-
-    <nav class="hidden md:flex gap-6 text-sm text-gray-300">
-      <a href="#" class="hover:text-fire transition">Home</a>
-      <a href="#" class="hover:text-fire transition">Obras</a>
-      <a href="#" class="hover:text-fire transition">VIP</a>
-      <a href="#" class="hover:text-fire transition">Loja</a>
-    </nav>
-
-    <button class="bg-fire hover:opacity-90 px-4 py-1.5 rounded-lg text-sm font-semibold text-black">
-      Login
-    </button>
-
-  </div>
-</header>-->
+<main class="flex-1">
 
 {% include 'base/header.html' %}
 
+<!-- ================= CONTEÚDO PRINCIPAL ================= -->
+<section class="relative min-h-screen flex items-center">
 
-<section class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+  <!-- 🔥 FUNDO (CAPA) -->
+  <div class="absolute inset-0">
+    <img src="{{ anime.imagem.url }}" class="w-full h-full object-cover">
 
+    <!-- 🔥 OVERLAY 90% (escuro forte) -->
+    <div class="absolute inset-0 bg-black/75"></div>
 
-  <div class="md:col-span-1">
+    <!-- 🔥 leve gradiente extra estilo site anime -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/60"></div>
+  </div>
 
-    <div class="rounded-xl overflow-hidden border border-gray-800 shadow-lg">
-      <img src="{{ anime.imagem.url }}"
-           class="w-full object-cover">
+  <!-- 🔥 CONTEÚDO -->
+  <div class="relative z-10 max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+
+    <!-- CAPA -->
+    <div class="md:col-span-1">
+
+      <div class="rounded-xl overflow-hidden border border-gray-800 shadow-2xl">
+        <img src="{{ anime.imagem.url }}" class="w-full object-cover">
+      </div>
+
+      <button id="openVolumesModal"
+        class="w-full mt-4 bg-fire hover:bg-[var(--fire-dark)] text-black font-bold py-3 rounded-lg transition">
+        ▶ Ler Agora
+      </button>
+
+      <button class="w-full mt-2 border border-gray-700 hover:border-fire py-3 rounded-lg text-sm transition">
+        ☆ Favoritar
+      </button>
+
     </div>
 
-<button id="openVolumesModal"
-  class="w-full mt-4 bg-fire hover:bg-[var(--fire-dark)] text-black font-bold py-3 rounded-lg transition">
-  ▶ Ler Agora
-</button>
+    <!-- DESCRIÇÃO CENTRALIZADA -->
+    <div class="md:col-span-2 flex items-center min-h-[70vh]">
 
-    <button class="w-full mt-2 border border-gray-700 hover:border-fire py-3 rounded-lg text-sm transition">
-      ☆ Favoritar
+      <div class="space-y-5 w-full">
+
+        <h1 class="text-4xl font-bold text-white drop-shadow-lg">
+          {{ anime.titulo }}
+        </h1>
+
+        <p class="text-gray-300 text-sm leading-relaxed max-w-2xl">
+          {{ anime.descricao }}
+        </p>
+
+        <div class="grid grid-cols-3 gap-4 mt-6 max-w-xl">
+
+          <div class="bg-black/60 border border-gray-800 rounded-xl p-4 text-center backdrop-blur">
+            <p class="text-fire font-bold text-lg">{{ anime.total_visualizacoes }}</p>
+            <p class="text-xs text-gray-400">Views</p>
+          </div>
+
+          <div class="bg-black/60 border border-gray-800 rounded-xl p-4 text-center backdrop-blur">
+            <p class="text-fire font-bold text-lg">{{ anime.total_capitulos }}</p>
+            <p class="text-xs text-gray-400">Capítulos</p>
+          </div>
+
+          <div class="bg-black/60 border border-gray-800 rounded-xl p-4 text-center backdrop-blur">
+            <p class="text-fire font-bold text-lg">9.8</p>
+            <p class="text-xs text-gray-400">Nota</p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= COMENTÁRIOS ================= -->
+<section class="max-w-7xl mx-auto px-4 py-10">
+
+  <h2 class="text-xl font-bold text-fire mb-4">💬 Comentários</h2>
+
+  {% if request.session.user_id %}
+  <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
+
+    <textarea id="comentarioText"
+      class="w-full bg-black border border-gray-700 rounded-lg p-3 text-sm focus:border-fire outline-none"
+      placeholder="Escreva sua opinião..."></textarea>
+
+    <button id="sendComentario"
+      class="mt-3 bg-fire hover:opacity-90 text-black font-bold px-4 py-2 rounded-lg">
+      Enviar
     </button>
 
   </div>
+  {% else %}
+    <p class="text-gray-400 text-sm mb-6">Faça login para comentar.</p>
+  {% endif %}
 
+  <div id="comentariosList" class="space-y-4">
 
-  <div class="md:col-span-2 space-y-5">
+    {% for c in anime.comentarios.all %}
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-4">
 
-    <h1 class="text-3xl font-bold">{{ anime.titulo }}</h1>
-
-    <p class="text-gray-400 text-sm leading-relaxed">
-      {{ anime.descricao }}
-    </p>
-
-
-{% for genero in anime.generos.all %}
-  <span class="bg-gray-900 border border-gray-800 px-3 py-1 rounded-full hover:border-fire">
-    {{ genero.nome }}
-  </span>
-{% endfor %}
-
-<div class="flex items-center gap-1 mt-2">
-  {% for i in "12345" %}
-    {% if forloop.counter <= anime.avaliacao|floatformat:0 %}
-      <span class="text-yellow-400"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6B00" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></span>
-    {% else %}
-      <span class="text-gray-600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6B00" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></span>
-    {% endif %}
-  {% endfor %}
-
-  <span class="text-sm text-gray-400 ml-2">
-    {{ anime.avaliacao }}
-  </span>
-</div>
-
-
-    <div class="grid grid-cols-3 gap-4 mt-6">
-
-      <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-        <p class="text-fire font-bold text-lg">{{ anime.total_visualizacoes }}</p>
-        <p class="text-xs text-gray-400">Views</p>
+      <div class="flex justify-between text-xs text-gray-400 mb-2">
+        <span class="text-fire font-semibold">{{ c.usuario }}</span>
+        <span>{{ c.data|date:"d/m/Y H:i" }}</span>
       </div>
 
-      <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-        {% if anime.total_capitulos > 0 %}
-          <p class="text-fire font-bold text-lg">{{ anime.total_capitulos }}</p>
-        {% else %}
-          <p class="text-fire font-bold text-lg">0</p>
-        {% endif %}
-          <p class="text-xs text-gray-400">Capítulos</p>
-        </div>
-
-
-
-      <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-        <p class="text-fire font-bold text-lg">9.8</p>
-        <p class="text-xs text-gray-400">Nota</p>
-      </div>
+      <p class="text-sm text-gray-300">
+        {{ c.texto }}
+      </p>
 
     </div>
+    {% empty %}
+      <p class="text-gray-500 text-sm">Nenhum comentário ainda.</p>
+    {% endfor %}
 
   </div>
 
 </section>
 
-<!-- CAPÍTULOS -->
-<section class="max-w-7xl mx-auto px-4 py-8">
-
-  <h2 class="text-xl font-bold text-fire mb-4">📚 Capítulos</h2>
-
-  <div class="space-y-2">
-
-    <div class="flex justify-between items-center bg-gray-900 border border-gray-800 p-3 rounded-lg hover:border-fire transition">
-      <span>Capítulo 1</span>
-      <span class="text-xs text-gray-500">2 dias atrás</span>
-    </div>
-
-    <div class="flex justify-between items-center bg-gray-900 border border-gray-800 p-3 rounded-lg hover:border-fire transition">
-      <span>Capítulo 2</span>
-      <span class="text-xs text-gray-500">1 dia atrás</span>
-    </div>
-
-    <div class="flex justify-between items-center bg-gray-900 border border-gray-800 p-3 rounded-lg hover:border-fire transition">
-      <span>Capítulo 3</span>
-      <span class="text-xs text-gray-500">Hoje</span>
-    </div>
-
-  </div>
-
-</section>
-
-<!-- TRENDING -->
+<!-- ================= TRENDING ================= -->
 <section class="max-w-7xl mx-auto px-4 py-10">
 
   <h2 class="text-xl font-bold text-fire mb-4">🔥 Trending</h2>
 
   <div class="flex gap-4 overflow-x-auto">
-    {% if sugeridos.all %}
-      {% for item in sugeridos %}
-      <div class="min-w-[160px] bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-fire transition">
-        <img src="{{ item.imagem.url }}"
-            class="h-[200px] w-full object-cover">
-        <div class="p-2">
-          <p class="font-bold text-sm">{{ item.titulo }}</p>
-          <p class="text-xs text-fire">{{ item.total_visualizacoes }}</p>
-        </div>
+
+    {% for item in sugeridos %}
+    <div class="min-w-[160px] bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-fire transition">
+      <img src="{{ item.imagem.url }}" class="h-[200px] w-full object-cover">
+      <div class="p-2">
+        <p class="font-bold text-sm">{{ item.titulo }}</p>
       </div>
-      {% endfor %}
-    {% else %}
-      <p class="font-bold text-sm">nenhuma sugestão</p>
-    {% endif %}
-    
+    </div>
+    {% endfor %}
 
   </div>
 
 </section>
 
 
+
+</main>
+
+<!-- ================= MODAL ================= -->
 <div id="volumesModal"
-     class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50">
+  class="fixed inset-0 bg-black/70 backdrop-blur-md hidden items-center justify-center z-50">
 
   <div class="bg-gray-900 w-full max-w-3xl h-[80vh] rounded-2xl p-6 relative shadow-2xl border border-gray-800">
 
-    <!-- FECHAR -->
     <button id="closeVolumesModal"
-            class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+      class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
       ✖
     </button>
 
-    <!-- TÍTULO -->
-    <h2 class="text-xl font-bold text-fire mb-4">
-      Volumes & Capítulos
-    </h2>
+    <h2 class="text-xl font-bold text-center text-fire mb-4">Volumes & Capítulos</h2>
 
-    <!-- LISTA -->
     <div class="overflow-y-auto h-full pr-2 space-y-4">
 
       {% for volume in anime.volumes.all %}
 
-        <div class="border border-gray-800 rounded-lg overflow-hidden">
+      <div class="border border-gray-800 rounded-lg overflow-hidden">
 
-          <!-- HEADER DO VOLUME -->
-          <button
-            class="w-full text-left px-4 py-3 bg-black/50 hover:bg-fire/10 transition flex justify-between items-center volume-toggle">
+        <button class="w-full text-left px-4 py-3 bg-black/50 hover:bg-fire/10 transition flex justify-between items-center volume-toggle">
+          <span class="font-semibold">Volume {{ volume.numero }}</span>
+          <span class="text-sm text-gray-400">{{ volume.capitulos.count }} capitulos</span>
+        </button>
 
-            <span class="font-semibold">
-              Volume {{ volume.numero }}
+        <div class="hidden px-4 py-3 bg-gray-900/50 space-y-2">
+
+          {% for cap in volume.capitulos.all %}
+
+          <div class="flex items-center justify-between">
+
+            <span class="text-sm">
+              Capítulo {{ cap.numero }} - {{ cap.titulo }}
             </span>
 
-            <span class="text-sm text-gray-400">
-              {{ volume.capitulos.count }} caps
-            </span>
-
-          </button>
-
-          <!-- ACCORDION -->
-          <div class="hidden px-4 py-3 bg-gray-900/50 space-y-2">
-
-            {% for cap in volume.capitulos.all %}
-              <a href="#"
-                 class="block px-3 py-2 rounded bg-black/40 hover:bg-fire/20 transition text-sm">
-                Capítulo {{ cap.numero }} - {{ cap.titulo }}
-              </a>
-            {% endfor %}
+            <button data-id="{{ cap.id }}"
+              class="toggle-lido text-xs px-2 py-1 rounded bg-gray-700">
+              ✓
+            </button>
 
           </div>
 
+          {% endfor %}
+
         </div>
+
+      </div>
 
       {% endfor %}
 
     </div>
 
   </div>
+
 </div>
 
+<!-- ================= FOOTER ================= -->
+<footer class="border-t border-gray-800 text-center py-6 text-xs text-gray-500">
+  © 2026 BladeToons
+</footer>
+
+<!-- ================= SCRIPTS ================= -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -244,35 +238,26 @@ document.addEventListener('DOMContentLoaded', function () {
   const openBtn = document.getElementById('openVolumesModal');
   const closeBtn = document.getElementById('closeVolumesModal');
 
-  // 🔥 abrir modal
   openBtn.addEventListener('click', () => {
     modal.classList.remove('hidden');
     modal.classList.add('flex');
-
-    document.body.classList.add('overflow-hidden'); // 🚫 trava scroll
+    document.body.classList.add('overflow-hidden');
   });
 
-  // 🔥 fechar modal
   function closeModal() {
     modal.classList.add('hidden');
     modal.classList.remove('flex');
-
-    document.body.classList.remove('overflow-hidden'); // 🔓 libera scroll
+    document.body.classList.remove('overflow-hidden');
   }
 
   closeBtn.addEventListener('click', closeModal);
 
-  // fechar clicando fora
   modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      closeModal();
-    }
+    if (e.target === modal) closeModal();
   });
 
-  // 🔥 ACCORDION
   document.querySelectorAll('.volume-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
-
       const content = btn.nextElementSibling;
 
       document.querySelectorAll('.volume-toggle + div').forEach(div => {
@@ -283,13 +268,52 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // ================= COMENTÁRIOS =================
+  const btn = document.getElementById('sendComentario');
+  const textarea = document.getElementById('comentarioText');
+  const list = document.getElementById('comentariosList');
+
+  if (btn) {
+    btn.addEventListener('click', function () {
+
+      const texto = textarea.value.trim();
+      if (!texto) return;
+
+      fetch(`/api/comentario/{{ anime.slug }}/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({ texto })
+      })
+      .then(res => res.json())
+      .then(data => {
+
+        if (data.ok) {
+
+          const div = document.createElement('div');
+          div.className = "bg-gray-900 border border-gray-800 rounded-xl p-4";
+
+          div.innerHTML = `
+            <div class="flex justify-between text-xs text-gray-400 mb-2">
+              <span class="text-fire font-semibold">${data.usuario}</span>
+              <span>${data.data}</span>
+            </div>
+            <p class="text-sm text-gray-300">${data.texto}</p>
+          `;
+
+          list.prepend(div);
+          textarea.value = "";
+
+        }
+
+      });
+
+    });
+  }
+
 });
 </script>
-
-<!-- FOOTER -->
-<footer class="border-t border-gray-800 text-center py-6 text-xs text-gray-500">
-  © 2026 BladeToons
-</footer>
 
 </body>
 </html>

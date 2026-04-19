@@ -1,5 +1,5 @@
 from django.contrib import admin
-from backend.model.model_accounts import UsuarioCustom
+from backend.model.model_accounts import UsuarioCustom, CapituloLido
 
 
 @admin.register(UsuarioCustom)
@@ -16,4 +16,36 @@ class UsuarioCustomAdmin(admin.ModelAdmin):
         ('Configurações', {
             'fields': ('entidade', 'vip')
         }),
+    )
+
+
+@admin.register(CapituloLido)
+class CapituloLidoAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'id',
+        'user',
+        'capitulo',
+        'lido',
+        'data_leitura',
+    )
+
+    list_filter = (
+        'lido',
+        'data_leitura',
+        'user',
+    )
+
+    search_fields = (
+        'user__username',
+        'capitulo__titulo',
+    )
+
+    ordering = (
+        '-data_leitura',
+    )
+
+    autocomplete_fields = (
+        'user',
+        'capitulo',
     )

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obra - BladeToons</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --fire: #ff4d1a;
+      --fire-dark: #e63e10;
+    }
+
+    .text-fire { color: var(--fire); }
+    .bg-fire { background-color: var(--fire); }
+    .border-fire { border-color: var(--fire); }
+  </style>
+</head>
+
+<body class="bg-black text-white font-sans flex flex-col min-h-screen">
+
+{% include 'base/header.html' %}
+
+<main class="flex-1">
+
+<section class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+
+  <!-- LEFT -->
+  <div class="md:col-span-1">
+    <div class="rounded-xl overflow-hidden border border-gray-800 shadow-lg">
+      <img src="{{ anime.imagem.url }}" class="w-full object-cover">
+    </div>
+
+    <button id="openVolumesModal"
+      class="w-full mt-4 bg-fire hover:bg-[var(--fire-dark)] text-black font-bold py-3 rounded-lg transition">
+      ▶ Ler Agora
+    </button>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="md:col-span-2 space-y-5">
+
+    <h1 class="text-3xl font-bold">{{ anime.titulo }}</h1>
+
+    <p class="text-gray-400 text-sm">{{ anime.descricao }}</p>
+
+    <div class="grid grid-cols-2 gap-4 mt-6">
+
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+        <p class="text-fire font-bold text-lg">{{ anime.total_visualizacoes }}</p>
+        <p class="text-xs text-gray-400">Views</p>
+      </div>
+
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+        <p class="text-fire font-bold text-lg">{{ anime.total_capitulos }}</p>
+        <p class="text-xs text-gray-400">Capítulos</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+<!-- ================= MODAL ================= -->
+<div id="volumesModal"
+     class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50">
+
+  <div class="bg-gray-900 w-full max-w-3xl h-[80vh] rounded-2xl p-6 relative border border-gray-800">
+
+    <button id="closeVolumesModal"
+            class="absolute top-4 right-4 text-gray-400 hover:text-white">
+      ✖
+    </button>
+
+    <h2 class="text-xl font-bold text-fire mb-4">Volumes & Capítulos</h2>
+
+    <div class="overflow-y-auto h-full space-y-4">
+
+      {% for volume in anime.volumes.all %}
+
+      <div class="border border-gray-800 rounded-lg overflow-hidden">
+
+        <button class="w-full text-left px-4 py-3 bg-black/50 volume-toggle flex justify-between">
+          <span>Volume {{ volume.numero }}</span>
+          <span class="text-sm text-gray-400">{{ volume.capitulos.count }} caps</span>
+        </button>
+
+        <div class="hidden px-4 py-3 bg-gray-900/50 space-y-2">
+
+          {% for cap in volume.capitulos.all %}
+
+          <div class="flex justify-between items-center">
+
+            <span class="text-sm">
+              Capítulo {{ cap.numero }} - {{ cap.titulo }}
+            </span>
+
+            <!-- 🔥 CONDIÇÃO CORRETA -->
+            <button
+              data-id="{{ cap.id }}"
+              class="toggle-lido text-xs px-2 py-1 rounded transition
+              {% if cap.lido %}
+                bg-green-600
+              {% else %}
+                bg-gray-700
+              {% endif %}">
+              ✓
+            </button>
+
+          </div>
+
+          {% endfor %}
+
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= FOOTER (AGORA FUNCIONA SEM SUMIR) ================= -->
+<footer class="border-t border-gray-800 text-center py-6 text-xs text-gray-500 mt-auto">
+  © 2026 BladeToons
+</footer>
+
+<!-- ================= SCRIPTS ================= -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  // MODAL
+  const modal = document.getElementById('volumesModal');
+  const openBtn = document.getElementById('openVolumesModal');
+  const closeBtn = document.getElementById('closeVolumesModal');
+
+  openBtn?.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  });
+
+  closeBtn?.addEventListener('click', () => {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  });
+
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  });
+
+  // ACCORDION
+  document.querySelectorAll('.volume-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const content = btn.nextElementSibling;
+      content.classList.toggle('hidden');
+    });
+  });
+
+  // TOGGLE LIDO
+  document.addEventListener('click', function (e) {
+
+    const btn = e.target.closest('.toggle-lido');
+    if (!btn) return;
+
+    const capId = btn.dataset.id;
+
+    fetch(`/dashboard/capitulo/lido/${capId}/`)
+      .then(res => res.json())
+      .then(data => {
+
+        btn.classList.remove('bg-gray-700', 'bg-green-600');
+
+        if (data.lido) {
+          btn.classList.add('bg-green-600');
+        } else {
+          btn.classList.add('bg-gray-700');
+        }
+
+      });
+
+  });
+
+});
+</script>
+
+</body>
+</html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const modal = document.getElementById('volumesModal');
+  const openBtn = document.getElementById('openVolumesModal');
+  const closeBtn = document.getElementById('closeVolumesModal');
+
+  // 🔥 abrir modal
+  openBtn.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    document.body.classList.add('overflow-hidden'); // 🚫 trava scroll
+  });
+
+  // 🔥 fechar modal
+  function closeModal() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+
+    document.body.classList.remove('overflow-hidden'); // 🔓 libera scroll
+  }
+
+  closeBtn.addEventListener('click', closeModal);
+
+  // fechar clicando fora
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // 🔥 ACCORDION
+  document.querySelectorAll('.volume-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+
+      const content = btn.nextElementSibling;
+
+      document.querySelectorAll('.volume-toggle + div').forEach(div => {
+        if (div !== content) div.classList.add('hidden');
+      });
+
+      content.classList.toggle('hidden');
+    });
+  });
+
+});
+</script>
+
+
+<!--Capitulo Lido-->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  document.querySelectorAll('.toggle-lido').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+
+      e.preventDefault();
+
+      const capId = this.dataset.id;
+
+      const url = "{% url 'dashboard_cliente:marcar_lido' 0 %}".replace('0', capId);
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+
+          console.log("RESPOSTA:", data);
+
+          this.classList.remove('bg-gray-700', 'bg-green-600');
+
+          // 🔥 AQUI ESTAVA O ERRO
+          if (data.lido) {
+            this.classList.add('bg-green-600');
+          } else {
+            this.classList.add('bg-gray-700');
+          }
+
+        })
+        .catch(err => console.error("ERRO:", err));
+
+    });
+  });
+
+});
+</script>

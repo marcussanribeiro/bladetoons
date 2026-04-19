@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     #'accounts',
     'frontend',
     #'dashboard_cliente',
-    'backend',
+    'backend.apps.BackendConfig',
+    #'backend',
 ]
 
 TEMPLATES = [

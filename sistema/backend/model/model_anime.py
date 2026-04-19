@@ -16,6 +16,7 @@ class Anime(models.Model):
     imagem = models.ImageField(upload_to='animes/', null=True, blank=True)
     generos = models.ManyToManyField(Genero, related_name='animes', null=True)
     slug = models.SlugField(unique=True, blank=True)
+    total_capitulos = models.PositiveIntegerField(default=0)
 
     def total_visualizacoes(self):
         return Capitulo.objects.filter(
@@ -29,6 +30,11 @@ class Anime(models.Model):
 
     def __str__(self):
         return self.titulo
+    
+    def atualizar_total_capitulos(anime):
+        total = Capitulo.objects.filter(volume__anime=anime).count()
+
+        Anime.objects.filter(id=anime.id).update(total_capitulos=total)
 
 
 class Volume(models.Model):

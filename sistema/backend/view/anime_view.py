@@ -7,6 +7,7 @@ import os
 from django.shortcuts import render, get_object_or_404
 from frontend.models import UsuarioCustom
 from django.http import JsonResponse
+from backend.model.model_accounts import CapituloLido
 
 
 class AnimeViewSet(viewsets.ModelViewSet):
@@ -46,14 +47,53 @@ def ver_pdf(request, nome_arquivo):
     })"""
 
 def obra_api(request, slug):
-    anime = get_object_or_404(Anime, slug=slug)
 
-    data = {
+    anime = get_object_or_404(Anime.objects.prefetch_related('volumes__capitulos'), slug=slug)
+
+    usuario_id = request.session.get('user_id')
+
+    lidos = set()
+
+    if usuario_id:
+        lidos = set(
+            CapituloLido.objects.filter(
+                user_id=usuario_id,
+                lido=True
+            ).values_list('capitulo_id', flat=True)
+        )
+
+    # 🔥 DEBUG REAL DO BANCO
+    total_capitulos = sum(
+        v.capitulos.count() for v in anime.volumes.all()
+    )
+
+    volumes_data = []
+
+    for volume in anime.volumes.all():
+
+        capitulos_data = []
+
+        for cap in volume.capitulos.all().order_by('numero'):
+
+            capitulos_data.append({
+                'id': cap.id,
+                'numero': cap.numero,
+                'titulo': cap.titulo,
+                'lido': cap.id in lidos,
+            })
+
+        volumes_data.append({
+            'id': volume.id,
+            'numero': volume.numero,
+            'capitulos': capitulos_data
+        })
+
+    return JsonResponse({
         'id': anime.id,
         'titulo': anime.titulo,
         'slug': anime.slug,
         'descricao': anime.descricao,
-        'capa': anime.capa.url if anime.capa else None,
-    }
-
-    return JsonResponse(data)
+        'capa': anime.imagem.url if anime.imagem else None,
+        'total_capitulos': total_capitulos,
+        'volumes': volumes_data,
+    })

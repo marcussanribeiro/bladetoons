@@ -11,5 +11,5 @@ urlpatterns = [
     path('login/', include('backend.url.url_login')),
     #path('anime/', include('backend.url.url_anime')),
     path('anime/', include(('backend.url.url_anime', 'anime'), namespace='anime')),
-    path('dashboard/', include('backend.url.url_dashboard_cliente')),
+    path( 'dashboard/', include(('backend.url.url_dashboard_cliente', 'dashboard_cliente'), namespace='dashboard_cliente')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

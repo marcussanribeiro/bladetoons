@@ -26,7 +26,7 @@
        class="flex items-center space-x-6 text-sm">
 
        {% if request.session.user_id %}
-    <a href="{% url 'dashboard' %}" class="hover:text-fire transition">Area do Cliente</a>
+    <a href="{% url 'dashboard_cliente:dashboard' %}" class="hover:text-fire transition">Area do Cliente</a>
     {% endif %}
     <a href="{% url 'frontend:home' %}" class="hover:text-fire transition">Home</a>
     <a href="#" class="hover:text-fire transition">Obras</a>
@@ -107,7 +107,7 @@
           <div id="userDropdown"
                class="hidden absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
 
-            <a href="{% url 'logout' %}"
+            <a href="{% url 'dashboard_cliente:logout' %}"
                class="block px-4 py-2 text-sm hover:bg-gray-800 hover:text-fire transition">
               🚪 Logout
             </a>
