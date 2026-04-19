@@ -17,6 +17,8 @@ class Anime(models.Model):
     generos = models.ManyToManyField(Genero, related_name='animes', null=True)
     slug = models.SlugField(unique=True, blank=True)
     total_capitulos = models.PositiveIntegerField(default=0)
+    atualizado_em = models.DateTimeField(auto_now_add=True)
+    criado_em = models.DateTimeField(auto_now=True)
 
     def total_visualizacoes(self):
         return Capitulo.objects.filter(
@@ -26,6 +28,11 @@ class Anime(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.titulo)
+
+        # ⚠️ GARANTE que criado_em nunca seja alterado manualmente
+        if self.pk:
+            self.criado_em = Anime.objects.get(pk=self.pk).criado_em
+
         super().save(*args, **kwargs)
 
     def __str__(self):

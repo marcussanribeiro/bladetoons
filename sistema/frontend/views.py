@@ -34,7 +34,7 @@ from django.db.models import Count
         'anime_selecionado': anime_selecionado
     })"""
 
-def home(request):
+"""def home(request):
     user = UsuarioCustom.objects.filter(
         id=request.session.get('user_id')
     ).first()
@@ -53,10 +53,46 @@ def home(request):
     if anime_slug:
         anime_selecionado = animes.filter(slug=anime_slug).first()
 
+
+    recentes = Anime.objects.order_by('-atualizado_em')[:10]
+
     return render(request, 'anime/layout.html', {
         'user': user,
         'animes': animes,
-        'anime_selecionado': anime_selecionado
+        'anime_selecionado': anime_selecionado,
+        'recentes': recentes
+    })"""
+
+def home(request):
+    user = UsuarioCustom.objects.filter(
+        id=request.session.get('user_id')
+    ).first()
+
+    animes = Anime.objects.prefetch_related(
+        'generos',
+        'volumes__capitulos'
+    ).order_by('-atualizado_em')
+    animes_normal = Anime.objects.prefetch_related(
+        'generos',
+        'volumes__capitulos'
+    ).order_by('-criado_em')
+
+    anime_slug = request.GET.get('anime')
+
+    anime_selecionado = None
+
+    if anime_slug:
+        anime_selecionado = animes.filter(slug=anime_slug).first()
+
+    # 🔥 RECENTES (já ordenado)
+    recentes = animes[:20]
+
+    return render(request, 'anime/layout.html', {
+        'user': user,
+        'animes': animes,
+        'anime_selecionado': anime_selecionado,
+        'recentes': recentes,
+        'animes_normal': animes_normal,
     })
 
 

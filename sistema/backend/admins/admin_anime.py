@@ -30,8 +30,9 @@ class VolumeInline(admin.TabularInline):
 # 🔥 ADMIN DE ANIME
 @admin.register(Anime)
 class AnimeAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'ver_pdf')
+    list_display = ('titulo', 'criado_em' ,'atualizado_em', 'ver_pdf')
     search_fields = ('titulo',)
+    ordering = ('-atualizado_em',)
     inlines = [VolumeInline]
 
     def ver_pdf(self, obj):

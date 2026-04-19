@@ -153,14 +153,20 @@
 
   <div class="flex gap-4 overflow-x-auto">
 
-    {% for item in sugeridos %}
-    <div class="min-w-[160px] bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-fire transition">
-      <img src="{{ item.imagem.url }}" class="h-[200px] w-full object-cover">
-      <div class="p-2">
-        <p class="font-bold text-sm">{{ item.titulo }}</p>
-      </div>
-    </div>
-    {% endfor %}
+{% for item in sugeridos %}
+
+<a href="{% url 'frontend:obra' item.slug %}"
+   class="min-w-[160px] bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-fire transition block">
+
+  <img src="{{ item.imagem.url }}" class="h-[200px] w-full object-cover">
+
+  <div class="p-2">
+    <p class="font-bold text-sm">{{ item.titulo }}</p>
+  </div>
+
+</a>
+
+{% endfor %}
 
   </div>
 
