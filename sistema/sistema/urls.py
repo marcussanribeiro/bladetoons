@@ -29,5 +29,8 @@ urlpatterns = [
     #path('dashboard/', include('dashboard_cliente.urls')),
     path('api/', include('backend.urls')),
     path('dashboard/', include('backend.url.url_dashboard_cliente')),
+    path('', include(('backend.urls', 'obra'), namespace='obra')),
+    path('anime/', include(('backend.url.url_anime', 'anime'), namespace='anime')),
+    #path('', include(('frontend.urls', 'frontend'), namespace='frontend')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -21,4 +21,4 @@ def dashboard(request):
 
 def logout(request):
     request.session.flush()
-    return redirect('home')
+    return redirect('frontend:home')

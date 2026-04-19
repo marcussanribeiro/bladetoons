@@ -1,0 +1,134 @@
+{% block trending %}
+
+<section class="max-w-7xl mx-auto px-4 py-6">
+
+  <!-- 🆕 RECENTES -->
+  <h3 class="text-base font-bold text-fire mb-3">🆕 Recentes</h3>
+
+  <div class="flex gap-2 overflow-x-auto pb-2">
+
+    <div class="obra w-[70px] sm:w-[80px] md:w-[90px] group cursor-pointer"
+         data-title="Demon Slayer"
+         data-tags="Ação, Histórico"
+         data-sinopse="Um jovem se torna caçador de demônios para salvar sua irmã.">
+
+      <div class="relative overflow-hidden rounded-md">
+        <img src="https://i.pinimg.com/736x/40/93/dc/4093dc75c4d6241089ee8584a08f3b68.jpg"
+             class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition duration-300">
+      </div>
+
+      <h4 class="text-[10px] font-semibold mt-1 truncate">Demon Slayer</h4>
+      <p class="text-[9px] text-fire">🔥 15k</p>
+    </div>
+
+  </div>
+
+  <!-- 🔥 TRENDING -->
+  <h3 class="text-base font-bold text-fire mt-6 mb-3">🔥 Trending</h3>
+
+  <div class="flex gap-2 overflow-x-auto pb-2">
+
+    <div class="obra w-[70px] sm:w-[80px] md:w-[90px] group cursor-pointer"
+         data-title="Naruto"
+         data-tags="Ação, Aventura"
+         data-sinopse="Um jovem ninja sonha em se tornar Hokage.">
+
+      <div class="relative overflow-hidden rounded-md">
+        <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+             class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition duration-300">
+      </div>
+
+      <h4 class="text-[10px] font-semibold mt-1 truncate">Naruto</h4>
+      <p class="text-[9px] text-fire">🔥 12k</p>
+    </div>
+
+    <div class="obra w-[70px] sm:w-[80px] md:w-[90px] group cursor-pointer"
+         data-title="Jujutsu Kaisen"
+         data-tags="Ação, Sobrenatural"
+         data-sinopse="Um estudante entra no mundo das maldições.">
+
+      <div class="relative overflow-hidden rounded-md">
+        <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+             class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition duration-300">
+      </div>
+
+      <h4 class="text-[10px] font-semibold mt-1 truncate">Jujutsu</h4>
+      <p class="text-[9px] text-fire">🔥 9k</p>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- TOOLTIP GLOBAL -->
+<div id="tooltip"
+     class="fixed z-50 hidden w-56 p-3 rounded-lg bg-gray-900/95 backdrop-blur text-white text-xs shadow-xl border border-gray-700 pointer-events-none transition-all duration-150">
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const tooltip = document.getElementById("tooltip");
+
+  function ativarTooltip() {
+    document.querySelectorAll(".obra").forEach(el => {
+
+      // evita duplicar evento
+      if (el.dataset.tooltipAtivo) return;
+      el.dataset.tooltipAtivo = "true";
+
+      el.addEventListener("mouseenter", () => {
+        const title = el.dataset.title;
+        const tags = el.dataset.tags;
+        const sinopse = el.dataset.sinopse;
+
+        tooltip.innerHTML = `
+          <div class="text-xs font-bold mb-1">${title}</div>
+
+          <div class="flex flex-wrap gap-1 mb-1">
+            ${tags.split(',').map(tag =>
+              `<span class="bg-fire/20 text-fire px-1 py-[1px] rounded text-[9px]">${tag.trim()}</span>`
+            ).join('')}
+          </div>
+
+          <div class="text-gray-300 text-[10px] leading-tight">
+            ${sinopse}
+          </div>
+        `;
+
+        tooltip.classList.remove("hidden");
+      });
+
+      el.addEventListener("mousemove", (e) => {
+        const offset = 15;
+
+        let x = e.clientX + offset;
+        let y = e.clientY + offset;
+
+        const rect = tooltip.getBoundingClientRect();
+
+        if (x + rect.width > window.innerWidth) {
+          x = e.clientX - rect.width - offset;
+        }
+
+        if (y + rect.height > window.innerHeight) {
+          y = e.clientY - rect.height - offset;
+        }
+
+        tooltip.style.left = x + "px";
+        tooltip.style.top = y + "px";
+      });
+
+      el.addEventListener("mouseleave", () => {
+        tooltip.classList.add("hidden");
+      });
+
+    });
+  }
+
+  ativarTooltip();
+
+});
+</script>
+
+{% endblock %}

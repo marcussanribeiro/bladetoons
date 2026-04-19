@@ -68,7 +68,7 @@
 
   <div class="md:col-span-2 space-y-5">
 
-    <h1 class="text-3xl font-bold">Attack on Titan</h1>
+    <h1 class="text-3xl font-bold">{{ anime.titulo }}</h1>
 
     <p class="text-gray-400 text-sm leading-relaxed">
       Em um mundo cercado por muralhas, a humanidade luta pela sobrevivência contra criaturas gigantes...
@@ -85,12 +85,12 @@
     <div class="grid grid-cols-3 gap-4 mt-6">
 
       <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-        <p class="text-fire font-bold text-lg">20K</p>
+        <p class="text-fire font-bold text-lg">{{ anime.total_visualizacoes }}</p>
         <p class="text-xs text-gray-400">Views</p>
       </div>
 
       <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-        <p class="text-fire font-bold text-lg">12</p>
+        <p class="text-fire font-bold text-lg">{{ anime.total_capitulos }}</p>
         <p class="text-xs text-gray-400">Capítulos</p>
       </div>
 

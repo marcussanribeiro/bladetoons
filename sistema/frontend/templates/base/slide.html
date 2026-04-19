@@ -251,7 +251,7 @@
   </div>
 
 </section>
-<script>
+<!--<script>
 const slides = document.querySelectorAll('.slide');
 const dots = document.querySelectorAll('.dot');
 const nextBtn = document.getElementById('nextBtn');
@@ -289,5 +289,42 @@ prevBtn.onclick = () => {
 setInterval(() => {
   showSlide((current + 1) % slides.length);
 }, 4000);
+</script>-->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+  const nextBtn = document.getElementById('nextBtn');
+  const prevBtn = document.getElementById('prevBtn');
+
+  let current = 0;
+
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.add('opacity-0');
+      slide.classList.remove('opacity-100');
+
+      dots[i].classList.remove('bg-fire');
+      dots[i].classList.add('bg-white/40');
+    });
+
+    slides[index].classList.remove('opacity-0');
+    slides[index].classList.add('opacity-100');
+
+    dots[index].classList.add('bg-fire');
+    dots[index].classList.remove('bg-white/40');
+
+    current = index;
+  }
+
+  nextBtn.onclick = () => showSlide((current + 1) % slides.length);
+  prevBtn.onclick = () => showSlide((current - 1 + slides.length) % slides.length);
+
+  setInterval(() => {
+    showSlide((current + 1) % slides.length);
+  }, 4000);
+
+});
 </script>
 {% endblock %}

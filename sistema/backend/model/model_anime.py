@@ -1,11 +1,52 @@
 from django.db import models
+from django.db.models import Sum
+from django.utils.text import slugify
+
+
+class Genero(models.Model):
+    nome = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nome
+
 
 class Anime(models.Model):
     titulo = models.CharField(max_length=200)
     descricao = models.TextField()
-    genero = models.CharField(max_length=100)
     imagem = models.ImageField(upload_to='animes/', null=True, blank=True)
-    pdf = models.FileField(upload_to='pdfs/')
+    generos = models.ManyToManyField(Genero, related_name='animes', null=True)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def total_visualizacoes(self):
+        return Capitulo.objects.filter(
+            volume__anime=self
+        ).aggregate(total=Sum('visualizacoes'))['total'] or 0
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.titulo)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.titulo
+
+
+class Volume(models.Model):
+    anime = models.ForeignKey(Anime, on_delete=models.CASCADE, related_name='volumes')
+    numero = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.anime.titulo} - Volume {self.numero}"
+
+
+class Capitulo(models.Model):
+    volume = models.ForeignKey(Volume, on_delete=models.CASCADE, related_name='capitulos')
+    titulo = models.CharField(max_length=200)
+    numero = models.IntegerField()
+    pdf = models.FileField(upload_to='capitulos/')
+
+    # 🔥 contador de visualização
+    visualizacoes = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.volume.anime.titulo} - Cap {self.numero}"

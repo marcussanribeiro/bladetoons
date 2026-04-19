@@ -8,7 +8,7 @@
   <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between relative">
 
     <!-- LOGO -->
-     <a href="{% url 'home' %}">
+     <a href="{% url 'frontend:home' %}">
     <div class="h-12 flex items-center z-10">
       
       <img src="/media/imagens_layout/bladetoons-logo.png"
@@ -28,7 +28,7 @@
        {% if request.session.user_id %}
     <a href="{% url 'dashboard' %}" class="hover:text-fire transition">Area do Cliente</a>
     {% endif %}
-    <a href="{% url 'home' %}" class="hover:text-fire transition">Home</a>
+    <a href="{% url 'frontend:home' %}" class="hover:text-fire transition">Home</a>
     <a href="#" class="hover:text-fire transition">Obras</a>
     <a href="#" class="hover:text-fire transition">VIP</a>
     <a href="#" class="hover:text-fire transition">Loja</a>
@@ -244,13 +244,14 @@
           class="w-full border border-fire py-2 rounded-lg hover:bg-fire hover:text-black transition font-medium text-sm">
           Criar conta
         </button>
+        <input type="hidden" name="next" value="{{ request.path }}">
 
       </form>
 
     </div>
   </div>
 
-<script>
+<!--<script>
 document.addEventListener('DOMContentLoaded', function () {
 
   const form = document.getElementById('loginForm');
@@ -273,6 +274,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (data.success) {
         window.location.href = "/dashboard/"; // redireciona só se sucesso
+      } else {
+        errorDiv.innerText = data.error;
+        errorDiv.classList.remove('hidden');
+      }
+
+    })
+    .catch(() => {
+      errorDiv.innerText = "Erro no servidor";
+      errorDiv.classList.remove('hidden');
+    });
+
+  });
+
+});
+</script>-->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+
+  const form = document.getElementById('loginForm');
+  const errorDiv = document.getElementById('loginError');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // limpa erro anterior
+    errorDiv.classList.add('hidden');
+    errorDiv.innerText = "";
+
+    const formData = new FormData(form);
+
+    fetch("{% url 'api:login' %}", {
+      method: "POST",
+      body: formData,
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+
+      if (data.success) {
+        window.location.href = data.redirect; // 🔥 CORRETO
       } else {
         errorDiv.innerText = data.error;
         errorDiv.classList.remove('hidden');
@@ -319,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
 
       <!-- FORM -->
-      <form method="POST" action="{% url 'registrar' %}" class="space-y-4">
+      <form method="POST" action="{% url 'frontend:registrar' %}" class="space-y-4">
         {% csrf_token %}
 
         <!-- NOME -->
