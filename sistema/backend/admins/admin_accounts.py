@@ -1,5 +1,6 @@
 from django.contrib import admin
-from backend.model.model_accounts import UsuarioCustom, CapituloLido
+from backend.model.model_accounts import UsuarioCustom
+from backend.model.model_anime import CapituloLido
 
 
 @admin.register(UsuarioCustom)

@@ -7,7 +7,8 @@ import os
 from django.shortcuts import render, get_object_or_404
 from frontend.models import UsuarioCustom
 from django.http import JsonResponse
-from backend.model.model_accounts import CapituloLido
+from backend.model.model_anime import CapituloLido
+from django.db.models import F
 
 
 class AnimeViewSet(viewsets.ModelViewSet):
@@ -48,7 +49,10 @@ def ver_pdf(request, nome_arquivo):
 
 def obra_api(request, slug):
 
-    anime = get_object_or_404(Anime.objects.prefetch_related('volumes__capitulos'), slug=slug)
+    anime = get_object_or_404(
+        Anime.objects.prefetch_related('volumes__capitulos'),
+        slug=slug
+    )
 
     usuario_id = request.session.get('user_id')
 
@@ -56,31 +60,36 @@ def obra_api(request, slug):
 
     if usuario_id:
         lidos = set(
-            CapituloLido.objects.filter(
+            int(x) for x in CapituloLido.objects.filter(
                 user_id=usuario_id,
-                lido=True
+                lido=True,
+                capitulo__volume__anime=anime
             ).values_list('capitulo_id', flat=True)
         )
 
-    # 🔥 DEBUG REAL DO BANCO
     total_capitulos = sum(
         v.capitulos.count() for v in anime.volumes.all()
     )
 
     volumes_data = []
 
-    for volume in anime.volumes.all():
+    for volume in anime.volumes.all().order_by('numero'):
 
         capitulos_data = []
 
         for cap in volume.capitulos.all().order_by('numero'):
 
-            capitulos_data.append({
+            cap_data = {
                 'id': cap.id,
                 'numero': cap.numero,
                 'titulo': cap.titulo,
-                'lido': cap.id in lidos,
-            })
+            }
+
+            # 🔥 só adiciona se estiver logado
+            if usuario_id:
+                cap_data['lido'] = cap.id in lidos
+
+            capitulos_data.append(cap_data)
 
         volumes_data.append({
             'id': volume.id,
@@ -97,3 +106,4 @@ def obra_api(request, slug):
         'total_capitulos': total_capitulos,
         'volumes': volumes_data,
     })
+

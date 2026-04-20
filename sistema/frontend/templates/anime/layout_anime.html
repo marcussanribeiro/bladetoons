@@ -178,42 +178,56 @@
 
 <!-- ================= MODAL ================= -->
 <div id="volumesModal"
-  class="fixed inset-0 bg-black/70 backdrop-blur-md hidden items-center justify-center z-50">
+  class="fixed inset-0 bg-black/70 backdrop-blur-md hidden items-center justify-center z-50"
+  data-anime-id="{{ anime.id }}"
+  data-anime-slug="{{ anime.slug }}">
+  <!-- CARD -->
+  <div class="bg-gray-900 w-full max-w-3xl h-[80vh] rounded-2xl shadow-2xl border border-gray-800 flex flex-col overflow-hidden">
 
-  <div class="bg-gray-900 w-full max-w-3xl h-[80vh] rounded-2xl p-6 relative shadow-2xl border border-gray-800">
+    <!-- HEADER FIXO -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800">
 
-    <button id="closeVolumesModal"
-      class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
-      ✖
-    </button>
+      <h2 class="text-lg font-bold text-fire">Volumes & Capítulos</h2>
 
-    <h2 class="text-xl font-bold text-center text-fire mb-4">Volumes & Capítulos</h2>
+      <button id="closeVolumesModal"
+        class="text-gray-400 hover:text-white text-xl transition">
+        ✖
+      </button>
 
-    <div class="overflow-y-auto h-full pr-2 space-y-4">
+    </div>
+
+    <!-- BODY COM SCROLL -->
+    <div id="volumesContainer" class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
 
       {% for volume in anime.volumes.all %}
 
-      <div class="border border-gray-800 rounded-lg overflow-hidden">
+      <div class="border border-gray-800 rounded-xl overflow-hidden">
 
+        <!-- VOLUME -->
         <button class="w-full text-left px-4 py-3 bg-black/50 hover:bg-fire/10 transition flex justify-between items-center volume-toggle">
           <span class="font-semibold">Volume {{ volume.numero }}</span>
-          <span class="text-sm text-gray-400">{{ volume.capitulos.count }} capitulos</span>
+          <span class="text-xs text-gray-400">{{ volume.capitulos.count }} capítulos</span>
         </button>
 
+        <!-- CAPITULOS -->
         <div class="hidden px-4 py-3 bg-gray-900/50 space-y-2">
 
           {% for cap in volume.capitulos.all %}
 
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between bg-black/30 px-3 py-2 rounded-lg">
 
             <span class="text-sm">
-              Capítulo {{ cap.numero }} - {{ cap.titulo }}
+              Cap {{ cap.numero }} - {{ cap.titulo }}
             </span>
-
-            <button data-id="{{ cap.id }}"
-              class="toggle-lido text-xs px-2 py-1 rounded bg-gray-700">
-              ✓
-            </button>
+<button data-id="{{ cap.id }}"
+  class="toggle-lido text-xs px-3 py-1 rounded-lg transition
+  {% if cap.lido == true %}
+    bg-green-500 text-black
+  {% else %}
+    bg-gray-700
+  {% endif %}">
+  ✓
+</button>
 
           </div>
 
@@ -228,7 +242,6 @@
     </div>
 
   </div>
-
 </div>
 
 <!-- ================= FOOTER ================= -->
@@ -237,31 +250,182 @@
 </footer>
 
 <!-- ================= SCRIPTS ================= -->
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
   const modal = document.getElementById('volumesModal');
+  const container = document.getElementById('volumesContainer');
   const openBtn = document.getElementById('openVolumesModal');
   const closeBtn = document.getElementById('closeVolumesModal');
 
-  openBtn.addEventListener('click', () => {
+  const slug = modal.dataset.animeSlug;
+
+  // 🔓 abrir modal
+  openBtn?.addEventListener('click', async () => {
     modal.classList.remove('hidden');
     modal.classList.add('flex');
     document.body.classList.add('overflow-hidden');
+
+    await carregarAnime(slug);
   });
 
+  // 🔒 fechar modal
   function closeModal() {
     modal.classList.add('hidden');
     modal.classList.remove('flex');
     document.body.classList.remove('overflow-hidden');
   }
 
-  closeBtn.addEventListener('click', closeModal);
+  closeBtn?.addEventListener('click', closeModal);
 
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
   });
 
+  // 🔥 CARREGAR ANIME VIA API
+  async function carregarAnime(slug) {
+
+    container.innerHTML = '<p class="text-center text-gray-400">Carregando...</p>';
+
+    const response = await fetch(`/api/anime/${slug}/`);
+    const data = await response.json();
+
+    container.innerHTML = '';
+
+    data.volumes.forEach(volume => {
+
+      const volumeDiv = document.createElement('div');
+      volumeDiv.className = "border border-gray-800 rounded-xl overflow-hidden";
+
+      volumeDiv.innerHTML = `
+        <button class="volume-toggle w-full text-left px-4 py-3 bg-black/50 flex justify-between">
+          <span>Volume ${volume.numero}</span>
+          <span class="text-xs text-gray-400">${volume.capitulos.length} capítulos</span>
+        </button>
+        <div class="hidden px-4 py-3 space-y-2"></div>
+      `;
+
+      const content = volumeDiv.querySelector('div');
+
+      volume.capitulos.forEach(cap => {
+
+        const capDiv = document.createElement('div');
+        capDiv.className = "flex justify-between items-center bg-black/30 px-3 py-2 rounded-lg";
+
+        capDiv.innerHTML = `
+          <span class="text-sm">
+            Cap ${cap.numero} - ${cap.titulo}
+          </span>
+
+          <button data-id="${cap.id}"
+            class="toggle-lido text-xs px-3 py-1 rounded-lg transition
+            ${cap.lido === true ? 'bg-green-500 text-black' : 'bg-gray-700'}">
+            ✓
+          </button>
+        `;
+
+        content.appendChild(capDiv);
+      });
+
+      container.appendChild(volumeDiv);
+    });
+  }
+
+  // 🔥 EVENTOS (delegation)
+  modal.addEventListener('click', async (e) => {
+
+    // abrir volume
+    if (e.target.closest('.volume-toggle')) {
+      const btn = e.target.closest('.volume-toggle');
+      const content = btn.nextElementSibling;
+
+      modal.querySelectorAll('.volume-toggle + div').forEach(div => {
+        if (div !== content) div.classList.add('hidden');
+      });
+
+      content.classList.toggle('hidden');
+    }
+
+    // marcar como lido
+    if (e.target.closest('.toggle-lido')) {
+
+      const btn = e.target.closest('.toggle-lido');
+      const capId = btn.dataset.id;
+
+      // 🔒 evita clicar várias vezes
+      if (btn.disabled) return;
+
+      try {
+        const response = await fetch(`{% url 'dashboard_cliente:marcar_lido' 0 %}`.replace('0', capId), {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'ok' || data.status === 'ja_marcado') {
+
+          btn.classList.add('bg-green-500', 'text-black');
+          btn.classList.remove('bg-gray-700');
+
+          btn.disabled = true; // 🔥 trava botão
+        }
+
+      } catch (error) {
+        console.error('Erro:', error);
+      }
+    }
+
+  });
+
+  // 🔐 CSRF
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie) {
+      document.cookie.split(';').forEach(cookie => {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        }
+      });
+    }
+    return cookieValue;
+  }
+
+});
+</script>
+<!--<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const modal = document.getElementById('volumesModal');
+  const openBtn = document.getElementById('openVolumesModal');
+  const closeBtn = document.getElementById('closeVolumesModal');
+
+  // 🔓 abrir modal
+  openBtn?.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
+  });
+
+  // 🔒 fechar modal
+  function closeModal() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.classList.remove('overflow-hidden');
+  }
+
+  closeBtn?.addEventListener('click', closeModal);
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // 📂 abrir volumes
   document.querySelectorAll('.volume-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
       const content = btn.nextElementSibling;
@@ -274,7 +438,60 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // 🔥 MARCAR COMO LIDO
+  document.querySelectorAll('.toggle-lido').forEach(btn => {
+
+    btn.addEventListener('click', async () => {
+      const capId = btn.dataset.id;
+
+      try {
+        const response = await fetch(`{% url 'dashboard_cliente:marcar_lido' 0 %}`.replace('0', capId), {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'ok') {
+
+          // 🔥 toggle visual
+          btn.classList.toggle('bg-green-500');
+          btn.classList.toggle('text-black');
+          btn.classList.toggle('bg-gray-700');
+
+        }
+
+      } catch (error) {
+        console.error('Erro:', error);
+      }
+    });
+
+  });
+
+  // 🔐 CSRF helper
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+});
+</script>-->
+
   // ================= COMENTÁRIOS =================
+  <!--<script>
   const btn = document.getElementById('sendComentario');
   const textarea = document.getElementById('comentarioText');
   const list = document.getElementById('comentariosList');
@@ -319,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 });
-</script>
+</script>-->
 
 </body>
 </html>

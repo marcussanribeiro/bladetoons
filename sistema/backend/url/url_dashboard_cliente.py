@@ -7,5 +7,5 @@ app_name = 'dashboard_cliente'
 urlpatterns = [
     path('', dashboard, name='dashboard'),
     path('logout/', logout, name='logout'),
-    path('capitulo/lido/<int:cap_id>/', marcar_lido, name='marcar_lido'),
+    path('capitulo/lido/<int:capitulo_id>/', marcar_lido, name='marcar_lido'),
 ]

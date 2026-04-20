@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models import Sum
 from django.utils.text import slugify
+from django.db.models import F
+from backend.model.model_accounts import UsuarioCustom
 
 
 class Genero(models.Model):
@@ -63,3 +65,13 @@ class Capitulo(models.Model):
 
     def __str__(self):
         return f"{self.volume.anime.titulo} - Cap {self.numero}"
+    
+
+class CapituloLido(models.Model):
+    user = models.ForeignKey(UsuarioCustom, on_delete=models.CASCADE)
+    capitulo = models.ForeignKey('Capitulo', on_delete=models.CASCADE)
+    lido = models.BooleanField(default=False)
+    data_leitura = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'capitulo')
