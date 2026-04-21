@@ -20,34 +20,84 @@
   </style>
 </head>
 
-<body class="bg-black text-white font-sans flex flex-col min-h-screen">
+<body class="bg-black text-white font-sans">
+
+<!-- HEADER -->
+<!--<header class="border-b border-gray-800 bg-black/90 backdrop-blur sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+
+    <div class="text-fire font-bold text-xl">BladeToons</div>
+
+    <nav class="hidden md:flex gap-6 text-sm text-gray-300">
+      <a href="#" class="hover:text-fire transition">Home</a>
+      <a href="#" class="hover:text-fire transition">Obras</a>
+      <a href="#" class="hover:text-fire transition">VIP</a>
+      <a href="#" class="hover:text-fire transition">Loja</a>
+    </nav>
+
+    <button class="bg-fire hover:opacity-90 px-4 py-1.5 rounded-lg text-sm font-semibold text-black">
+      Login
+    </button>
+
+  </div>
+</header>-->
 
 {% include 'base/header.html' %}
 
-<main class="flex-1">
 
 <section class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
 
-  <!-- LEFT -->
+
   <div class="md:col-span-1">
+
     <div class="rounded-xl overflow-hidden border border-gray-800 shadow-lg">
-      <img src="{{ anime.imagem.url }}" class="w-full object-cover">
+      <img src="{{ anime.imagem.url }}"
+           class="w-full object-cover">
     </div>
 
-    <button id="openVolumesModal"
-      class="w-full mt-4 bg-fire hover:bg-[var(--fire-dark)] text-black font-bold py-3 rounded-lg transition">
-      ▶ Ler Agora
+<button id="openVolumesModal"
+  class="w-full mt-4 bg-fire hover:bg-[var(--fire-dark)] text-black font-bold py-3 rounded-lg transition">
+  ▶ Ler Agora
+</button>
+
+    <button class="w-full mt-2 border border-gray-700 hover:border-fire py-3 rounded-lg text-sm transition">
+      ☆ Favoritar
     </button>
+
   </div>
 
-  <!-- RIGHT -->
+
   <div class="md:col-span-2 space-y-5">
 
     <h1 class="text-3xl font-bold">{{ anime.titulo }}</h1>
 
-    <p class="text-gray-400 text-sm">{{ anime.descricao }}</p>
+    <p class="text-gray-400 text-sm leading-relaxed">
+      {{ anime.descricao }}
+    </p>
 
-    <div class="grid grid-cols-2 gap-4 mt-6">
+
+{% for genero in anime.generos.all %}
+  <span class="bg-gray-900 border border-gray-800 px-3 py-1 rounded-full hover:border-fire">
+    {{ genero.nome }}
+  </span>
+{% endfor %}
+
+<div class="flex items-center gap-1 mt-2">
+  {% for i in "12345" %}
+    {% if forloop.counter <= anime.avaliacao|floatformat:0 %}
+      <span class="text-yellow-400"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6B00" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></span>
+    {% else %}
+      <span class="text-gray-600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6B00" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></span>
+    {% endif %}
+  {% endfor %}
+
+  <span class="text-sm text-gray-400 ml-2">
+    {{ anime.avaliacao }}
+  </span>
+</div>
+
+
+    <div class="grid grid-cols-3 gap-4 mt-6">
 
       <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
         <p class="text-fire font-bold text-lg">{{ anime.total_visualizacoes }}</p>
@@ -55,8 +105,15 @@
       </div>
 
       <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-        <p class="text-fire font-bold text-lg">{{ anime.total_capitulos }}</p>
-        <p class="text-xs text-gray-400">Capítulos</p>
+          <p class="text-fire font-bold text-lg">{{ anime.total_capitulos }}</p>
+          <p class="text-xs text-gray-400">Capítulos</p>
+        </div>
+
+
+
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+        <p class="text-fire font-bold text-lg">9.8</p>
+        <p class="text-xs text-gray-400">Nota</p>
       </div>
 
     </div>
@@ -65,134 +122,137 @@
 
 </section>
 
-</main>
+<!-- CAPÍTULOS -->
+<!--<section class="max-w-7xl mx-auto px-4 py-8">
 
-<!-- ================= MODAL ================= -->
+  <h2 class="text-xl font-bold text-fire mb-4">📚 Capítulos</h2>
+
+  <div class="space-y-2">
+
+    <div class="flex justify-between items-center bg-gray-900 border border-gray-800 p-3 rounded-lg hover:border-fire transition">
+      <span>Capítulo 1</span>
+      <span class="text-xs text-gray-500">2 dias atrás</span>
+    </div>
+
+    <div class="flex justify-between items-center bg-gray-900 border border-gray-800 p-3 rounded-lg hover:border-fire transition">
+      <span>Capítulo 2</span>
+      <span class="text-xs text-gray-500">1 dia atrás</span>
+    </div>
+
+    <div class="flex justify-between items-center bg-gray-900 border border-gray-800 p-3 rounded-lg hover:border-fire transition">
+      <span>Capítulo 3</span>
+      <span class="text-xs text-gray-500">Hoje</span>
+    </div>
+
+  </div>
+
+</section>-->
+
+<!-- TRENDING -->
+<section class="max-w-7xl mx-auto px-4 py-10">
+
+  <h2 class="text-xl font-bold text-fire mb-4">🔥 Trending</h2>
+
+  <div class="flex gap-4 overflow-x-auto">
+    {% if sugeridos.all %}
+      {% for item in sugeridos %}
+      <div class="min-w-[160px] bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-fire transition">
+        <img src="{{ item.imagem.url }}"
+            class="h-[200px] w-full object-cover">
+        <div class="p-2">
+          <p class="font-bold text-sm">{{ item.titulo }}</p>
+          <p class="text-xs text-fire">{{ item.total_visualizacoes }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="font-bold text-sm">nenhuma sugestão</p>
+    {% endif %}
+    
+
+  </div>
+
+</section>
+
+
 <div id="volumesModal"
      class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50">
 
-  <div class="bg-gray-900 w-full max-w-3xl h-[80vh] rounded-2xl p-6 relative border border-gray-800">
+  <div class="bg-gray-900 w-full max-w-3xl h-[80vh] rounded-2xl p-6 relative shadow-2xl border border-gray-800">
 
+    <!-- FECHAR -->
     <button id="closeVolumesModal"
-            class="absolute top-4 right-4 text-gray-400 hover:text-white">
+            class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
       ✖
     </button>
 
-    <h2 class="text-xl font-bold text-fire mb-4">Volumes & Capítulos</h2>
+    <!-- TÍTULO -->
+    <h2 class="text-xl font-bold text-fire mb-4">
+      Volumes & Capítulos
+    </h2>
 
-    <div class="overflow-y-auto h-full space-y-4">
+    <!-- LISTA -->
+    <div class="overflow-y-auto h-full pr-2 space-y-4">
 
-      {% for volume in anime.volumes.all %}
+{% for volume in anime.volumes.all %}
 
-      <div class="border border-gray-800 rounded-lg overflow-hidden">
+  <div class="border border-gray-800 rounded-lg overflow-hidden">
 
-        <button class="w-full text-left px-4 py-3 bg-black/50 volume-toggle flex justify-between">
-          <span>Volume {{ volume.numero }}</span>
-          <span class="text-sm text-gray-400">{{ volume.capitulos.count }} caps</span>
-        </button>
+    <button class="w-full text-left px-4 py-3 bg-black/50 hover:bg-fire/10 transition flex justify-between items-center volume-toggle">
+      <span class="font-semibold">
+        Volume {{ volume.numero }}
+      </span>
 
-        <div class="hidden px-4 py-3 bg-gray-900/50 space-y-2">
+      <span class="text-sm text-gray-400">
+        {{ volume.capitulos.count }} caps
+      </span>
+    </button>
 
-          {% for cap in volume.capitulos.all %}
+    <div class="hidden px-4 py-3 bg-gray-900/50 space-y-2">
 
-          <div class="flex justify-between items-center">
+      {% for cap in volume.capitulos.all %}
 
-            <span class="text-sm">
-              Capítulo {{ cap.numero }} - {{ cap.titulo }}
-            </span>
+        <div class="flex items-center justify-between gap-2">
 
-            <!-- 🔥 CONDIÇÃO CORRETA -->
-            <button
-              data-id="{{ cap.id }}"
-              class="toggle-lido text-xs px-2 py-1 rounded transition
-              {% if cap.lido %}
-                bg-green-600
-              {% else %}
-                bg-gray-700
-              {% endif %}">
-              ✓
-            </button>
+          <span class="text-sm">
+            Capítulo {{ cap.numero }} - {{ cap.titulo }}
+          </span>
 
-          </div>
+            
+          <button
+            data-id="{{ cap.id }}"
+            class="toggle-lido text-xs px-2 py-1 rounded transition
+            {% if cap.lido is True %}
+              bg-green-600
+            {% else %}
+              bg-gray-700
+            {% endif %}">
+            ✓
+          </button>
 
-          {% endfor %}
 
         </div>
-
-      </div>
 
       {% endfor %}
 
     </div>
 
   </div>
+
+{% endfor %}
+
+</div>
 </div>
 
-<!-- ================= FOOTER (AGORA FUNCIONA SEM SUMIR) ================= -->
-<footer class="border-t border-gray-800 text-center py-6 text-xs text-gray-500 mt-auto">
+
+
+
+
+
+<!-- FOOTER -->
+<footer class="border-t border-gray-800 text-center py-6 text-xs text-gray-500">
   © 2026 BladeToons
 </footer>
-
-<!-- ================= SCRIPTS ================= -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-  // MODAL
-  const modal = document.getElementById('volumesModal');
-  const openBtn = document.getElementById('openVolumesModal');
-  const closeBtn = document.getElementById('closeVolumesModal');
-
-  openBtn?.addEventListener('click', () => {
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-  });
-
-  closeBtn?.addEventListener('click', () => {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  });
-
-  modal?.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-  });
-
-  // ACCORDION
-  document.querySelectorAll('.volume-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const content = btn.nextElementSibling;
-      content.classList.toggle('hidden');
-    });
-  });
-
-  // TOGGLE LIDO
-  document.addEventListener('click', function (e) {
-
-    const btn = e.target.closest('.toggle-lido');
-    if (!btn) return;
-
-    const capId = btn.dataset.id;
-
-    fetch(`/dashboard/capitulo/lido/${capId}/`)
-      .then(res => res.json())
-      .then(data => {
-
-        btn.classList.remove('bg-gray-700', 'bg-green-600');
-
-        if (data.lido) {
-          btn.classList.add('bg-green-600');
-        } else {
-          btn.classList.add('bg-gray-700');
-        }
-
-      });
-
-  });
-
-});
-</script>
 
 </body>
 </html>

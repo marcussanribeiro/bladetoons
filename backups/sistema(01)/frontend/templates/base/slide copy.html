@@ -114,14 +114,14 @@
   <div class="flex items-center group">
 
     <span class="w-5 font-bold
-      {% if forloop.counter == 1 %}text-yellow-400 font-bold w-5
+      {% if forloop.counter == 1 %}text-yellow-400 
       {% elif forloop.counter == 2 %}text-gray-300
       {% elif forloop.counter == 3 %}text-orange-400
       {% else %}text-gray-400{% endif %}">
       {{ forloop.counter }}
     </span>
 
-    <img src="{{ anime.imagem.url }}" class="w-10 h-14 object-cover rounded border border-yellow-400 ml-2">
+    <img src="{{ anime.imagem.url }}" class="w-10 h-14 object-cover rounded ml-2">
 
     <div class="flex flex-col ml-3">
       <span class="text-sm group-hover:text-fire">

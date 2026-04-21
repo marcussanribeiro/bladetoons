@@ -50,105 +50,6 @@
 </div>
 
 
-<div id="searchModal"
-     class="fixed inset-0 w-full bg-black/70 hidden items-start justify-center z-50">
-         <!-- BOTÃO FECHAR -->
-    <button id="closeModal"
-            class="absolute top-3 right-3 text-gray-400 hover:text-white text-lg px-2 py-1 rounded hover:bg-gray-800 transition">
-      ✕
-    </button>
-
-  <div class="bg-gray-900 w-full max-w-2xl mt-20 rounded-2xl shadow-lg p-4 relative">
-
-
-
-    <!-- INPUT -->
-    <input id="modalSearchInput"
-           type="text"
-           placeholder="Buscar anime..."
-           class="w-full bg-gray-800 text-sm px-4 py-3 rounded-lg focus:outline-none border border-gray-700 focus:border-fire text-white">
-
-    <!-- RESULTADOS -->
-    <div id="modalSearchResults"
-         class="mt-4 w-[95%] max-h-[400px] overflow-y-auto space-y-1"></div>
-
-  </div>
-
-
-<script>
-const btn = document.getElementById("searchBtn");
-const modal = document.getElementById("searchModal");
-const input = document.getElementById("modalSearchInput");
-const resultsBox = document.getElementById("modalSearchResults");
-
-// abrir modal
-btn.addEventListener("click", () => {
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-    input.focus();
-});
-
-// fechar clicando fora
-modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-    }
-});
-
-// fechar com ESC
-document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-    }
-});
-
-// debounce
-let timeout = null;
-
-input.addEventListener("input", function () {
-    clearTimeout(timeout);
-
-    const query = this.value;
-
-    if (query.length < 2) {
-        resultsBox.innerHTML = "";
-        return;
-    }
-
-    resultsBox.innerHTML = `<div class="text-gray-400 text-sm p-2">Buscando...</div>`;
-
-    timeout = setTimeout(async () => {
-        try {
-            // ⚠️ COLOQUE SUA URL REAL AQUI
-            const res = await fetch(`{% url 'anime:search_animes' %}?q=${query}`);
-            const data = await res.json();
-
-            if (data.results.length === 0) {
-                resultsBox.innerHTML = `<div class="p-2 text-gray-400 text-sm">Nada encontrado</div>`;
-            } else {
-                resultsBox.innerHTML = data.results.map(anime => `
-                    <a href="/obra/${anime.slug}/"
-                       class="flex items-center gap-3 p-2 hover:bg-gray-800 rounded">
-
-                        <img src="${anime.imagem || '/static/img/default.png'}"
-                             class="w-10 h-12 object-cover rounded">
-
-                        <span class="text-sm text-white">${anime.titulo}</span>
-                    </a>
-                `).join("");
-            }
-
-        } catch (error) {
-            resultsBox.innerHTML = `<div class="p-2 text-red-400 text-sm">Erro na busca</div>`;
-        }
-    }, 300);
-});
-</script>
-
-  </div>
-
 
 
 </div>
@@ -233,6 +134,127 @@ input.addEventListener("input", function () {
   </div>
 
 </header>
+
+
+<!-- 🔥 MODAL SEARCH (FORA DO HEADER) -->
+<div id="searchModal"
+     class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50">
+
+  <!-- CONTAINER -->
+  <div class="w-[95%] h-[80%] bg-gray-900 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+
+    <!-- HEADER -->
+<div class="flex items-center justify-between p-4 border-b border-gray-800 relative">
+
+  <!-- TÍTULO CENTRAL -->
+  <h2 class="absolute left-1/2 -translate-x-1/2 text-white font-semibold">
+    Buscar Obras
+  </h2>
+
+  <!-- BOTÃO DIREITA -->
+  <button id="closeModal"
+          class="ml-auto text-gray-400 hover:text-white text-xl transition">
+    ✕
+  </button>
+
+</div>
+
+    <!-- INPUT -->
+    <div class="p-4 border-b border-gray-800">
+      <input id="modalSearchInput"
+             type="text"
+             placeholder="Buscar anime..."
+             class="w-full bg-gray-800 px-4 py-3 rounded-lg border border-gray-700 focus:border-fire text-white">
+    </div>
+
+    <!-- RESULTADOS -->
+    <div id="modalSearchResults"
+         class="flex-1 overflow-y-auto p-4 space-y-2">
+    </div>
+
+  </div>
+
+</div>
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const btn = document.getElementById("searchBtn");
+  const modal = document.getElementById("searchModal");
+  const close = document.getElementById("closeModal");
+  const input = document.getElementById("modalSearchInput");
+  const resultsBox = document.getElementById("modalSearchResults");
+
+  // abrir modal
+  btn.addEventListener("click", () => {
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.body.style.overflow = "hidden";
+      input.focus();
+  });
+
+  // fechar botão X
+  close.addEventListener("click", () => {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.body.style.overflow = "auto";
+  });
+
+  // clicar fora
+  modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+          close.click();
+      }
+  });
+
+  // ESC fecha
+  document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close.click();
+  });
+
+  // debounce busca
+  let timeout = null;
+
+  input.addEventListener("input", function () {
+      clearTimeout(timeout);
+
+      const query = this.value;
+
+      if (query.length < 2) {
+          resultsBox.innerHTML = "";
+          return;
+      }
+
+      resultsBox.innerHTML = `<div class="text-gray-400">Buscando...</div>`;
+
+      timeout = setTimeout(async () => {
+          try {
+              const res = await fetch(`{% url 'anime:search_animes' %}?q=${query}`);
+              const data = await res.json();
+
+              if (!data.results.length) {
+                  resultsBox.innerHTML = `<div class="text-gray-400">Nada encontrado</div>`;
+              } else {
+                  resultsBox.innerHTML = data.results.map(anime => `
+                      <a href="/obra/${anime.slug}/"
+                         class="flex items-center gap-3 p-3 hover:bg-gray-800 rounded-lg">
+
+                          <img src="${anime.imagem || '/static/img/default.png'}"
+                               class="w-12 h-16 object-cover rounded">
+
+                          <span class="text-white">${anime.titulo}</span>
+                      </a>
+                  `).join("");
+              }
+
+          } catch {
+              resultsBox.innerHTML = `<div class="text-red-400">Erro na busca</div>`;
+          }
+      }, 300);
+  });
+
+});
+</script>
+</div>
 
 
 <!-- janela modal de login -->
@@ -535,6 +557,9 @@ document.addEventListener('DOMContentLoaded', function () {
 </div>
 
 
+
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -720,5 +745,8 @@ document.addEventListener('click', (e) => {
                 });
               });
 </script>
+
+
+
 
      {% endblock %}
