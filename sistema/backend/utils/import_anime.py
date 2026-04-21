@@ -7,16 +7,6 @@ from backend.model.model_anime import Anime, Volume, Capitulo, Pagina, Genero
 
 
 def importar_anime_zip(file):
-    """
-    Estrutura esperada no ZIP:
-
-    anime/
-        info.xml
-        volume_1/
-            capitulo_1/
-                001.webp
-                002.webp
-    """
 
     with tempfile.TemporaryDirectory() as tmp:
 

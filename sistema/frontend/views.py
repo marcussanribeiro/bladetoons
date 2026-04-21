@@ -30,7 +30,7 @@ def home(request):
     if anime_slug:
         anime_selecionado = animes.filter(slug=anime_slug).first()
 
-    # 🔥 RECENTES (já ordenado)
+    #  RECENTES (já ordenado)
     recentes = animes[:20]
 
     return render(request, 'anime/layout.html', {

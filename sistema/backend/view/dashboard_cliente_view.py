@@ -1,19 +1,13 @@
 from django.shortcuts import render, redirect
 from backend.model.model_accounts import UsuarioCustom
-from backend.model.model_anime import CapituloLido
-from backend.model.model_anime import Capitulo
+from backend.model.model_anime import CapituloLido, Capitulo
 from django.http import JsonResponse
 from django.db.models import F
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404
+from backend.wrappers.login_required import login_required_custom
 
 
-def login_required_custom(view_func):
-    def wrapper(request, *args, **kwargs):
-        if not request.session.get('user_id'):
-            return redirect('/')
-        return view_func(request, *args, **kwargs)
-    return wrapper
 
 @login_required_custom
 def dashboard(request):
@@ -48,18 +42,18 @@ def marcar_lido(request, capitulo_id):
         defaults={'lido': True}
     )
 
-    # 🔥 se já existe e já está lido → não faz nada
+    #  se já existe e já está lido → não faz nada
     if not created and obj.lido:
         return JsonResponse({
             'status': 'ja_marcado'
         })
 
-    # 🔥 se existe mas estava falso → ativa
+    # se existe mas estava falso → ativa
     if not obj.lido:
         obj.lido = True
         obj.save()
 
-    # 🔥 incrementa apenas UMA vez por usuário
+    #  incrementa apenas UMA vez por usuário
     if created:
         Capitulo.objects.filter(id=cap.id).update(
             visualizacoes=F('visualizacoes') + 1

@@ -9,6 +9,8 @@ from frontend.models import UsuarioCustom
 from django.http import JsonResponse
 from backend.model.model_anime import CapituloLido, Capitulo
 from django.db.models import F
+from django.db.models import Prefetch
+from django.db.models import Q
 
 
 class AnimeViewSet(viewsets.ModelViewSet):
@@ -28,28 +30,8 @@ def ver_pdf(request, nome_arquivo):
     return response
 
 
-"""def obra(request, slug):
-    return render(request, 'layout_anime.html')"""
 
-"""def obra(request, slug):
-    user = None
 
-    user_id = request.session.get('user_id')
-
-    if user_id:
-        user = UsuarioCustom.objects.filter(id=user_id).first()
-
-    # 🔥 busca pelo slug
-    anime = get_object_or_404(Anime, slug=slug)
-
-    return render(request, 'anime/layout_anime.html', {
-        'user': user,
-        'anime': anime
-    })"""
-
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.db.models import Prefetch
 
 def obra_api(request, slug):
 
@@ -131,5 +113,25 @@ def paginas_capitulo(request, capitulo_id):
         'id': cap.id,
         'titulo': cap.titulo,
         'paginas': paginas
+    })
+
+
+def search_animes(request):
+    print("🔥 BUSCA CHAMADA")  # debug
+
+    query = request.GET.get("q", "")
+
+    animes = Anime.objects.filter(
+        Q(titulo__icontains=query)
+    )[:10]
+
+    return JsonResponse({
+        "results": [
+            {
+                "titulo": a.titulo,
+                "slug": a.slug,
+                "imagem": a.imagem.url if a.imagem else ""
+            } for a in animes
+        ]
     })
 
