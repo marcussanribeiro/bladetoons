@@ -18,11 +18,3 @@ def dashboard(request):
         context = {'user': user}
         return render(request, 'dashboard/dashboard.html', context)
     
-
-"""def logout(request):
-    request.session.flush()
-    return redirect('home')"""
-
-"""def logout(request):
-    request.session.flush()
-    return redirect('/')"""

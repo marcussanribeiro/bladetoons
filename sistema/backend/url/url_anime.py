@@ -9,10 +9,7 @@ router.register(r'animes', AnimeViewSet, basename='animes')
 
 urlpatterns = [
     path('', include(router.urls)),  # 👈 API
-    path('pdf/<str:nome_arquivo>/', ver_pdf, name='ver_pdf'),  # 👈 PDF
-    #path('obra/', obra , name='obra'),
-    #path('<slug:slug>/', obra, name='obra_detalhe'),
+    path('pdf/<str:nome_arquivo>/', ver_pdf, name='ver_pdf'),
     path('<slug:slug>/', obra_api, name='obra_api'),
     path('capitulo/<int:capitulo_id>/', paginas_capitulo, name='revista')
-    #path('<slug:slug>/', .views.obra, name='obra_detalhe'),
 ]

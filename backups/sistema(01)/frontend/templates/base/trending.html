@@ -1,0 +1,152 @@
+{% block trending %}
+
+<section class="max-w-7xl mx-auto px-4 py-6">
+<h3 class="text-base font-bold text-fire mb-3">🆕 Atualizados Recentemente</h3>
+<!-- 🆕 RECENTES -->
+<div class="flex gap-2 overflow-x-auto pb-2">
+  
+
+  {% for anime in recentes %}
+
+  <a href="{% url 'frontend:obra' anime.slug %}"
+     class="obra w-[70px] sm:w-[80px] md:w-[90px] group cursor-pointer block"
+     data-title="{{ anime.titulo }}"
+     data-tags="{% for g in anime.generos.all %}{{ g.nome }}{% if not forloop.last %}, {% endif %}{% endfor %}"
+     data-sinopse="{{ anime.descricao }}">
+
+    <div class="relative overflow-hidden rounded-md">
+      <img src="{{ anime.imagem.url }}"
+           class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition duration-300">
+    </div>
+
+    <h4 class="text-[10px] font-semibold mt-1 truncate">
+      {{ anime.titulo }}
+    </h4>
+
+    <p class="text-[9px] text-fire">
+      🔥 {{ anime.total_visualizacoes }}
+    </p>
+
+  </a>
+
+  {% empty %}
+
+    <p class="text-xs text-gray-500">Nenhum anime recente</p>
+
+  {% endfor %}
+
+</div>
+
+  <!-- 🔥 TRENDING -->
+  <h3 class="text-base font-bold text-fire mt-6 mb-3">🔥 Trending</h3>
+
+  <div class="flex gap-2 overflow-x-auto pb-2">
+
+{% for animes in animes_normal %}
+
+<a href="{% url 'frontend:obra' animes.slug %}"
+   class="obra w-[70px] sm:w-[80px] md:w-[90px] group cursor-pointer block"
+   data-title="{{ animes.titulo }}"
+   data-tags="{% for g in animes.generos.all %}{{ g.nome }}{% if not forloop.last %}, {% endif %}{% endfor %}"
+   data-sinopse="{{ animes.descricao|truncatechars:120 }}">
+
+  <div class="relative overflow-hidden rounded-md">
+
+    {% if animes.imagem %}
+      <img src="{{ animes.imagem.url }}"
+           class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition duration-300">
+    {% else %}
+      <img src="https://via.placeholder.com/150x220"
+           class="w-full aspect-[2/3] object-cover">
+    {% endif %}
+
+  </div>
+
+  <h4 class="text-[10px] font-semibold mt-1 truncate">
+    {{ animes.titulo }}
+  </h4>
+
+  <p class="text-[9px] text-fire">
+    🔥 {{ animes.total_visualizacoes }}
+  </p>
+
+</a>
+
+{% empty %}
+  <p class="text-gray-400 text-sm">Nenhuma obra cadastrada.</p>
+{% endfor %}
+
+</section>
+
+<!-- TOOLTIP GLOBAL -->
+<div id="tooltip"
+     class="fixed z-50 hidden w-56 p-3 rounded-lg bg-gray-900/95 backdrop-blur text-white text-xs shadow-xl border border-gray-700 pointer-events-none transition-all duration-150">
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const tooltip = document.getElementById("tooltip");
+
+  function ativarTooltip() {
+    document.querySelectorAll(".obra").forEach(el => {
+
+      // evita duplicar evento
+      if (el.dataset.tooltipAtivo) return;
+      el.dataset.tooltipAtivo = "true";
+
+      el.addEventListener("mouseenter", () => {
+        const title = el.dataset.title;
+        const tags = el.dataset.tags;
+        const sinopse = el.dataset.sinopse;
+
+        tooltip.innerHTML = `
+          <div class="text-xs font-bold mb-1">${title}</div>
+
+          <div class="flex flex-wrap gap-1 mb-1">
+            ${tags.split(',').map(tag =>
+              `<span class="bg-fire/20 text-fire px-1 py-[1px] rounded text-[9px]">${tag.trim()}</span>`
+            ).join('')}
+          </div>
+
+          <div class="text-gray-300 text-[10px] leading-tight">
+            ${sinopse}
+          </div>
+        `;
+
+        tooltip.classList.remove("hidden");
+      });
+
+      el.addEventListener("mousemove", (e) => {
+        const offset = 15;
+
+        let x = e.clientX + offset;
+        let y = e.clientY + offset;
+
+        const rect = tooltip.getBoundingClientRect();
+
+        if (x + rect.width > window.innerWidth) {
+          x = e.clientX - rect.width - offset;
+        }
+
+        if (y + rect.height > window.innerHeight) {
+          y = e.clientY - rect.height - offset;
+        }
+
+        tooltip.style.left = x + "px";
+        tooltip.style.top = y + "px";
+      });
+
+      el.addEventListener("mouseleave", () => {
+        tooltip.classList.add("hidden");
+      });
+
+    });
+  }
+
+  ativarTooltip();
+
+});
+</script>
+
+{% endblock %}

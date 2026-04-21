@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+
+{% include 'base/head.html' %}
+{% block head %}
+{% endblock %}
+
+<!-- ESCONDE A PÁGINA ATÉ O TAILWIND CARREGAR -->
+<style>
+  body {
+    visibility: hidden;
+  }
+</style>
+
+<script>
+(function () {
+
+  function tailwindReady() {
+    const styles = document.querySelectorAll('style');
+    for (let style of styles) {
+      if (style.innerHTML.includes('--tw')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function waitTailwind() {
+    if (tailwindReady()) {
+      document.body.style.visibility = 'visible';
+    } else {
+      requestAnimationFrame(waitTailwind);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', waitTailwind);
+
+})();
+</script>
+
+
+</head>
+
+<body class="bg-black text-white font-sans">
+
+<!-- HEADER -->
+{% include 'base/header.html' %}
+
+<!-- SLIDE -->
+{% include 'base/slide.html' %}
+
+<!-- TOP LEITORES -->
+{% include 'base/top_leitores.html' %}
+
+<!-- OBRAS EM DESTAQUE -->
+{% include 'base/obras_em_destaque.html' %}
+
+<!-- CONTEÚDO PRINCIPAL -->
+{# {% block content %}{% endblock %} #}
+
+<!-- TRENDING -->
+{% include 'base/trending.html' %}
+
+<!-- FOOTER -->
+{% include 'base/footer.html' %}
+
+</body>
+</html>

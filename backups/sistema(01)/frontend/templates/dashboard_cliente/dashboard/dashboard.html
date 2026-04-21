@@ -1,0 +1,255 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Bladetoons</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { 
+      theme: { 
+        extend: { 
+          colors: { fire: '#ff5a1f' } 
+        } 
+      } 
+    }
+  </script>
+</head>
+
+<body class="bg-black text-white font-sans">
+
+<!-- HEADER -->
+<!--<header class="bg-black/80 backdrop-blur border-b border-gray-800 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between relative">
+
+    <div class="h-12 flex items-center z-10">
+      <img src="/media/imagens_layout/bladetoons-logo.png" 
+           class="h-[80%] object-contain">
+    </div>
+
+
+   <nav id="mainMenu"
+     class="md:flex space-x-6 text-sm absolute left-1/2 -translate-x-1/2 transition-all duration-300">
+      <a href="#" class="hover:text-fire transition">Home</a>
+      <a href="#" class="hover:text-fire transition">Obras</a>
+      <a href="#" class="hover:text-fire font-semibold">VIP</a>
+      <a href="#" class="hover:text-fire transition">Loja</a>
+      <a href="#" class="hover:text-fire transition">Comunidade</a>
+      <a href="#" class="hover:text-fire transition">Ajuda</a>
+
+    </nav>
+
+
+    <div class="flex items-center gap-4 z-10">
+
+  
+      <div class="flex items-center gap-2">
+
+        <div id="searchBox" class="w-0 overflow-hidden transition-all duration-300">
+          <input id="searchInput" type="text" placeholder="Buscar animes..."
+            class="w-full bg-gray-900 text-sm px-4 py-2 rounded-lg focus:outline-none border border-gray-700 focus:border-fire">
+        </div>
+
+        <button id="searchBtn" class="text-gray-400 hover:text-fire text-lg">
+          🔍
+        </button>
+
+      </div>
+
+    
+      <div class="hidden md:flex items-center gap-1 bg-gray-900 px-2 py-1 rounded-lg border border-gray-700">
+        <img src="/media/imagens_layout/coin.png" 
+             class="h-4 w-4 object-contain">
+        <span class="text-sm font-semibold">120</span>
+      </div>
+
+    
+      <div class="relative">
+
+
+  <div id="userMenuBtn"
+       class="flex items-center gap-2 cursor-pointer group">
+
+    <img src="/media/imagens_layout/user.png"
+         class="w-10 h-10 rounded-full object-cover border border-gray-700 group-hover:border-fire transition">
+
+    <div class="hidden md:flex flex-col leading-tight">
+      <span class="text-sm group-hover:text-fire">
+        {{ user.username }}
+      </span>
+
+<span class="text-[10px] font-semibold flex justify-center items-center gap-1 w-full">
+  {% if user.vip %}
+    <span class="text-yellow-400">💎 VIP</span>
+  {% else %}
+    <span class="text-gray-400">Free</span>
+  {% endif %}
+</span>
+    </div>
+  </div>
+
+
+  <div id="userDropdown"
+       class="hidden absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
+
+    <a href="{% url 'dashboard_cliente:logout' %}"
+       class="block px-4 py-2 text-sm hover:bg-gray-800 hover:text-fire transition">
+       🚪 Logout
+    </a>
+
+  </div>
+
+ 
+
+</div>
+
+   
+      <button class="md:hidden text-fire text-xl">🔍</button>
+
+    </div>
+
+  </div>
+</header> -->
+{% include 'base/header.html' %}
+
+
+<section class="max-w-7xl mx-auto px-4 py-6">
+
+  <h3 class="text-xl font-bold text-fire mb-4">▶ Continuar Lendo</h3>
+
+  <div class="flex gap-4 overflow-x-auto mb-8">
+
+    <div class="min-w-[200px] bg-gray-900 rounded-xl overflow-hidden">
+      <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+           class="w-full h-[120px] object-cover">
+      <div class="p-2">
+        <h4 class="text-sm font-bold">Attack on Titan</h4>
+        <p class="text-xs text-gray-400">Ep. 5</p>
+      </div>
+    </div>
+
+    <div class="min-w-[200px] bg-gray-900 rounded-xl overflow-hidden">
+      <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+           class="w-full h-[120px] object-cover">
+      <div class="p-2">
+        <h4 class="text-sm font-bold">Naruto</h4>
+        <p class="text-xs text-gray-400">Ep. 12</p>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 class="text-xl font-bold text-fire mb-4">🔥 Recomendados</h3>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+    <div class="bg-gray-900 rounded-xl overflow-hidden hover:scale-105 transition">
+      <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+           class="w-full h-[180px] object-cover">
+      <div class="p-2">
+        <h4 class="text-sm font-bold">Jujutsu Kaisen</h4>
+      </div>
+    </div>
+
+    <div class="bg-gray-900 rounded-xl overflow-hidden hover:scale-105 transition">
+      <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+           class="w-full h-[180px] object-cover">
+      <div class="p-2">
+        <h4 class="text-sm font-bold">Demon Slayer</h4>
+      </div>
+    </div>
+
+    <div class="bg-gray-900 rounded-xl overflow-hidden hover:scale-105 transition">
+      <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+           class="w-full h-[180px] object-cover">
+      <div class="p-2">
+        <h4 class="text-sm font-bold">One Piece</h4>
+      </div>
+    </div>
+
+    <div class="bg-gray-900 rounded-xl overflow-hidden hover:scale-105 transition">
+      <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+           class="w-full h-[180px] object-cover">
+      <div class="p-2">
+        <h4 class="text-sm font-bold">Chainsaw Man</h4>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-gray-800 text-center py-4 text-xs">
+  <p class="text-gray-500">© 2026 Bladetoons</p>
+</footer>
+
+<!-- SCRIPT BUSCA -->
+<script>
+const searchBtn = document.getElementById('searchBtn');
+const searchBox = document.getElementById('searchBox');
+const searchInput = document.getElementById('searchInput');
+const menu = document.getElementById('mainMenu');
+
+let open = false;
+
+searchBtn.onclick = (e) => {
+  e.stopPropagation();
+  open = !open;
+
+  if (open) {
+    // abre busca
+    searchBox.classList.remove('w-0');
+    searchBox.classList.add('w-[300px]');
+
+    // ESCONDE MENU (forçado)
+    menu.style.display = 'none';
+
+    searchInput.focus();
+  } else {
+    // fecha busca
+    searchBox.classList.add('w-0');
+    searchBox.classList.remove('w-[300px]');
+
+    // MOSTRA MENU
+    menu.style.display = 'flex';
+  }
+};
+
+// clicar fora fecha
+document.addEventListener('click', (e) => {
+  if (open && !searchBox.contains(e.target) && e.target !== searchBtn) {
+    searchBox.classList.add('w-0');
+    searchBox.classList.remove('w-[300px]');
+    menu.style.display = 'flex';
+    open = false;
+  }
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const btn = document.getElementById('userMenuBtn');
+  const menu = document.getElementById('userDropdown');
+
+  // evita erro se não existir na página
+  if (!btn || !menu) return;
+
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation(); // evita fechar imediatamente
+    menu.classList.toggle('hidden');
+  });
+
+  // fechar ao clicar fora
+  document.addEventListener('click', function (e) {
+    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+      menu.classList.add('hidden');
+    }
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,633 @@
+        {% block content %}
+{% load static %}
+
+
+
+<header class="bg-black/80 backdrop-blur border-b border-gray-800 sticky top-0 z-50">
+
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between relative">
+
+    <!-- LOGO -->
+     <a href="{% url 'frontend:home' %}">
+    <div class="h-12 flex items-center z-10">
+      
+      <img src="/media/imagens_layout/bladetoons-logo.png"
+           class="h-[80%] object-contain">
+           
+    </div>
+    </a>
+
+    <!-- MENU CENTRAL -->
+<!-- CENTRO (MENU + SEARCH JUNTOS) -->
+<div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-6">
+
+  <!-- MENU -->
+  <nav id="mainMenu"
+       class="flex items-center space-x-6 text-sm">
+
+       {% if request.session.user_id %}
+    <a href="{% url 'dashboard_cliente:dashboard' %}" class="hover:text-fire transition">Area do Cliente</a>
+    {% endif %}
+    <a href="{% url 'frontend:home' %}" class="hover:text-fire transition">Home</a>
+    <a href="#" class="hover:text-fire transition">Obras</a>
+    <a href="#" class="hover:text-fire transition">VIP</a>
+    <a href="#" class="hover:text-fire transition">Loja</a>
+    <a href="#" class="hover:text-fire transition">Comunidade</a>
+    <a href="#" class="hover:text-fire transition">Ajuda</a>
+
+  </nav>
+
+  <!-- SEARCH -->
+  <div class="flex items-center gap-2">
+
+    <div id="searchBox"
+         class="w-0 overflow-hidden transition-all duration-300">
+
+      <input id="searchInput"
+             type="text"
+             placeholder="Buscar..."
+             class="bg-gray-900 text-sm px-3 py-2 rounded-lg focus:outline-none border border-gray-700 focus:border-fire w-[300px]">
+    </div>
+
+    <button id="searchBtn"
+            class="text-gray-400 hover:text-fire transition flex items-center justify-center w-8 h-8">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+    </button>
+
+  </div>
+
+</div>
+
+    <!-- DIREITA -->
+    <div class="flex items-center gap-4 z-10 ml-auto">
+
+      <!-- BUSCA -->
+
+
+      {% if request.session.user_id %}
+
+        <!-- MOEDAS -->
+        <div class="hidden md:flex items-center gap-1 bg-gray-900 px-2 py-1 rounded-lg border border-gray-700">
+          <img src="/media/imagens_layout/coin.png"
+               class="h-4 w-4 object-contain">
+          <span class="text-sm font-semibold">120</span>
+        </div>
+
+        <!-- PERFIL -->
+        <div class="relative">
+
+          <div id="userMenuBtn"
+               class="flex items-center gap-2 cursor-pointer group">
+
+            <img src="/media/imagens_layout/user.png"
+                 class="w-10 h-10 rounded-full object-cover border border-gray-700 group-hover:border-fire transition">
+
+            <div class="hidden md:flex flex-col leading-tight">
+              <span class="text-sm group-hover:text-fire">
+                {{ user.username }}
+              </span>
+
+              <span class="text-[10px] font-semibold flex justify-center items-center gap-1 w-full">
+                {% if user.vip %}
+                  <span class="text-yellow-400">💎 VIP</span>
+                {% else %}
+                  <span class="text-gray-400">Free</span>
+                {% endif %}
+              </span>
+            </div>
+
+          </div>
+
+          <!-- DROPDOWN -->
+          <div id="userDropdown"
+               class="hidden absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
+
+            <a href="{% url 'dashboard_cliente:logout' %}"
+               class="block px-4 py-2 text-sm hover:bg-gray-800 hover:text-fire transition">
+              🚪 Logout
+            </a>
+
+          </div>
+
+        </div>
+
+      {% else %}
+
+        <!-- LOGIN / REGISTRO -->
+        <div class="flex items-center gap-3">
+
+          <a href="#"
+             id="openRegisterModal"
+             class="border border-fire px-3 py-1.5 rounded-lg text-xs md:text-sm hover:bg-fire hover:text-black transition">
+            Registrar
+          </a>
+
+          <a href="#"
+             id="openLoginModal"
+             class="bg-fire px-3 py-1.5 rounded-lg text-xs md:text-sm hover:opacity-80">
+            Login
+          </a>
+
+        </div>
+
+      {% endif %}
+
+    </div>
+
+  </div>
+
+</header>
+
+
+<!-- janela modal de login -->
+<div id="loginModal"
+     class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity duration-300">
+
+  <!-- CONTEÚDO -->
+  <div id="modalContent"
+      class="bg-gradient-to-br from-fire/40 via-gray-900 to-black p-[2px] rounded-2xl w-full max-w-md relative transform scale-95 opacity-0 transition-all duration-300 shadow-2xl">
+
+    <!-- CARD INTERNO -->
+    <div class="w-full bg-gray-900/90 backdrop-blur p-8 rounded-2xl border border-gray-800">
+
+      <!-- FECHAR -->
+      <button id="closeLoginModal"
+              class="absolute top-3 right-4 text-gray-500 hover:text-white text-xl transition">
+        ✖
+      </button>
+
+      <!-- TÍTULO -->
+      <div class="w-full flex flex-col items-center justify-center mb-6 text-center">
+        <img src="/media/imagens_layout/bladetoons-logo.png"
+             class="mx-auto h-10 md:h-12 object-contain mb-3">
+
+        <h2 class="text-2xl font-bold text-fire tracking-wide">
+          Entrar na sua conta
+        </h2>
+      </div>
+
+      <form method="POST" id="loginForm" class="space-y-5">
+        
+        {% csrf_token %}
+
+        <!-- EMAIL -->
+        <div>
+          <label class="text-sm text-gray-400">Email</label>
+          <input type="email" name="email"
+            class="w-full mt-1 px-3 py-2 bg-black/70 border border-gray-700 rounded-lg focus:outline-none focus:border-fire focus:ring-1 focus:ring-fire transition">
+        </div>
+
+        <!-- SENHA -->
+        <div>
+          <label class="text-sm text-gray-400">Senha</label>
+          <input type="password" name="password"
+            class="w-full mt-1 px-3 py-2 bg-black/70 border border-gray-700 rounded-lg focus:outline-none focus:border-fire focus:ring-1 focus:ring-fire transition">
+        </div>
+
+        <!-- LEMBRAR -->
+        <div class="flex items-center justify-between text-sm">
+          <label class="flex items-center gap-2 text-gray-300">
+            <input type="checkbox" class="accent-fire">
+            Lembrar de mim
+          </label>
+
+          <a href="#" class="text-gray-400 hover:text-fire transition">
+            Esqueceu a senha?
+          </a>
+        </div>
+          
+        <!-- BOTÃO LOGIN -->
+        <button type="submit"
+                class="w-full bg-fire py-2 rounded-lg font-semibold hover:opacity-90 transition shadow-md shadow-fire/30">
+          Entrar
+        </button>
+                <!-- MENSAGENS -->
+        <div id="loginError" class="text-red-500 text-sm text-center hidden"></div>
+
+        <!-- DIVISOR -->
+        <div class="flex items-center gap-2 text-gray-500 text-sm">
+          <div class="flex-1 h-px bg-gray-700"></div>
+          ou
+          <div class="flex-1 h-px bg-gray-700"></div>
+        </div>
+
+        <!-- 🔥 LOGIN COM GOOGLE -->
+<div class="grid grid-cols-2 gap-3">
+
+  <!-- GOOGLE -->
+  <a href="/accounts/google/login/"
+     class="flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-gray-800 transition text-sm">
+
+<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path></svg>
+
+    Entrar com Google
+  </a>
+
+  <!-- DISCORD -->
+  <a href="#"
+     class="flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-gray-800 transition text-sm">
+
+<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"></path></svg>
+
+    Entrar com Discord
+  </a>
+
+</div>
+
+        <!-- CRIAR CONTA -->
+        <button type="button" id="openRegisterModal"
+          class="w-full border border-fire py-2 rounded-lg hover:bg-fire hover:text-black transition font-medium text-sm">
+          Criar conta
+        </button>
+        <input type="hidden" name="next" value="{{ request.path }}">
+
+      </form>
+
+    </div>
+  </div>
+
+<!--<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const form = document.getElementById('loginForm');
+  const errorDiv = document.getElementById('loginError');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault(); // 🚨 impede reload
+
+    const formData = new FormData(form);
+
+    fetch("{% url 'api:login' %}", {
+      method: "POST",
+      body: formData,
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+
+      if (data.success) {
+        window.location.href = "/dashboard/"; // redireciona só se sucesso
+      } else {
+        errorDiv.innerText = data.error;
+        errorDiv.classList.remove('hidden');
+      }
+
+    })
+    .catch(() => {
+      errorDiv.innerText = "Erro no servidor";
+      errorDiv.classList.remove('hidden');
+    });
+
+  });
+
+});
+</script>-->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+
+  const form = document.getElementById('loginForm');
+  const errorDiv = document.getElementById('loginError');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // limpa erro anterior
+    errorDiv.classList.add('hidden');
+    errorDiv.innerText = "";
+
+    const formData = new FormData(form);
+
+    fetch("{% url 'api:login' %}", {
+      method: "POST",
+      body: formData,
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+
+      if (data.success) {
+        window.location.href = data.redirect; // 🔥 CORRETO
+      } else {
+        errorDiv.innerText = data.error;
+        errorDiv.classList.remove('hidden');
+      }
+
+    })
+    .catch(() => {
+      errorDiv.innerText = "Erro no servidor";
+      errorDiv.classList.remove('hidden');
+    });
+
+  });
+
+});
+</script>
+</div>
+ 
+<!-- MODAL REGISTRO -->
+<div id="registerModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50">
+
+  <!-- CONTAINER -->
+  <div id="registerContent"
+       class="bg-gradient-to-br from-fire/40 via-gray-900 to-black p-[2px] rounded-2xl w-full max-w-md relative
+       transform scale-95 opacity-0 transition-all duration-300 shadow-2xl flex items-center justify-center">
+
+    <!-- CARD -->
+    <div class="w-full bg-gray-900/95 backdrop-blur rounded-2xl border border-gray-800 relative
+                p-5 md:p-6 space-y-4 flex flex-col justify-center">
+
+      <!-- FECHAR -->
+      <button id="closeRegisterModal"
+              class="absolute top-3 right-4 text-gray-500 hover:text-white text-xl transition">
+        ✖
+      </button>
+
+      <!-- LOGO -->
+      <div class="flex flex-col items-center text-center mb-2">
+        <img src="/media/imagens_layout/bladetoons-logo.png"
+             class="mx-auto h-10 md:h-12 mb-2">
+
+        <h2 class="text-lg md:text-xl font-bold text-fire">
+          Criar sua conta
+        </h2>
+      </div>
+
+      <!-- FORM -->
+      <form method="POST" action="{% url 'frontend:registrar' %}" class="space-y-4">
+        {% csrf_token %}
+
+        <!-- NOME -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400">Nome</label>
+            <input type="text" name="first_name"
+              class="w-full mt-1 px-2 py-2 text-sm bg-black/70 border border-gray-700 rounded-lg focus:border-fire">
+          </div>
+
+          <div>
+            <label class="text-xs text-gray-400">Sobrenome</label>
+            <input type="text" name="last_name"
+              class="w-full mt-1 px-2 py-2 text-sm bg-black/70 border border-gray-700 rounded-lg focus:border-fire">
+          </div>
+        </div>
+
+        <!-- EMAIL -->
+        <div>
+          <label class="text-xs text-gray-400">Email</label>
+          <input type="email" name="email"
+            class="w-full mt-1 px-2 py-2 text-sm bg-black/70 border border-gray-700 rounded-lg focus:border-fire">
+        </div>
+
+        <!-- TELEFONE -->
+        <div>
+          <label class="text-xs text-gray-400">Telefone</label>
+          <input type="text" name="phone"
+            class="w-full mt-1 px-2 py-2 text-sm bg-black/70 border border-gray-700 rounded-lg focus:border-fire">
+        </div>
+
+        <!-- BOTÃO -->
+        <button type="submit"
+          class="w-full bg-fire py-2 text-sm rounded-lg font-semibold hover:opacity-90 transition">
+          Criar conta
+        </button>
+
+      </form>
+
+      <!-- DIVISOR -->
+      <div class="flex items-center gap-2 text-gray-500 text-sm mt-2">
+        <div class="flex-1 h-px bg-gray-700"></div>
+        ou
+        <div class="flex-1 h-px bg-gray-700"></div>
+      </div>
+
+      <!-- SOCIAL LOGIN -->
+      <div class="grid grid-cols-2 gap-3">
+
+        <!-- GOOGLE -->
+        <a href="/accounts/google/login/"
+           class="flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-gray-800 hover:border-fire transition text-sm">
+
+<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path></svg>
+
+          Registrar com Google
+        </a>
+
+        <!-- DISCORD -->
+        <a href="#"
+           class="flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-gray-800 hover:border-fire transition text-sm">
+
+<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"></path></svg>
+
+          Registrar com Discord
+        </a>
+
+      </div>
+
+      <!-- VOLTAR LOGIN -->
+      <button type="button" id="goToLogin"
+        class="w-full border border-fire py-2 rounded-lg hover:bg-fire hover:text-black transition font-medium text-sm">
+        Já tenho conta
+      </button>
+
+    </div>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  // MODAIS
+  const loginModal = document.getElementById('loginModal');
+  const registerModal = document.getElementById('registerModal');
+
+  // CONTEÚDOS
+  const loginContent = document.getElementById('modalContent');
+  const registerContent = document.getElementById('registerContent');
+
+  // BOTÕES
+  const openLoginBtn = document.getElementById('openLoginModal');
+  const closeLoginBtn = document.getElementById('closeLoginModal');
+  const closeRegisterBtn = document.getElementById('closeRegisterModal');
+  const goToLogin = document.getElementById('goToLogin');
+
+  if (!loginModal || !registerModal) return;
+
+  // =========================
+  // FUNÇÕES BASE
+  // =========================
+
+  function abrirModal(modal, content) {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+
+    setTimeout(() => {
+      content.classList.remove('scale-95', 'opacity-0');
+      content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+  }
+
+  function fecharModal(modal, content) {
+    content.classList.add('scale-95', 'opacity-0');
+    content.classList.remove('scale-100', 'opacity-100');
+
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = 'auto';
+    }, 200);
+  }
+
+  // =========================
+  // ABRIR LOGIN
+  // =========================
+
+  if (openLoginBtn) {
+    openLoginBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      abrirModal(loginModal, loginContent);
+    });
+  }
+
+  // =========================
+  // FECHAR LOGIN
+  // =========================
+
+  if (closeLoginBtn) {
+    closeLoginBtn.addEventListener('click', function () {
+      fecharModal(loginModal, loginContent);
+    });
+  }
+
+  loginModal.addEventListener('click', function (e) {
+    if (e.target === loginModal) {
+      fecharModal(loginModal, loginContent);
+    }
+  });
+
+  // =========================
+  // 🔥 LOGIN → REGISTRO (GARANTIDO)
+  // =========================
+
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('#openRegisterModal');
+
+    if (!btn) return;
+
+    e.preventDefault();
+
+    fecharModal(loginModal, loginContent);
+
+    setTimeout(() => {
+      abrirModal(registerModal, registerContent);
+    }, 200);
+  });
+
+  // =========================
+  // FECHAR REGISTRO
+  // =========================
+
+  if (closeRegisterBtn) {
+    closeRegisterBtn.addEventListener('click', function () {
+      fecharModal(registerModal, registerContent);
+    });
+  }
+
+  registerModal.addEventListener('click', function (e) {
+    if (e.target === registerModal) {
+      fecharModal(registerModal, registerContent);
+    }
+  });
+
+  // =========================
+  // REGISTRO → LOGIN
+  // =========================
+
+  if (goToLogin) {
+    goToLogin.addEventListener('click', function () {
+      fecharModal(registerModal, registerContent);
+
+      setTimeout(() => {
+        abrirModal(loginModal, loginContent);
+      }, 200);
+    });
+  }
+
+});
+</script>
+
+<script>
+const searchBtn = document.getElementById('searchBtn');
+const searchBox = document.getElementById('searchBox');
+const searchInput = document.getElementById('searchInput');
+const menu = document.getElementById('mainMenu');
+
+let open = false;
+
+searchBtn.onclick = (e) => {
+  e.stopPropagation();
+  open = !open;
+
+  if (open) {
+    // abre busca
+    searchBox.classList.remove('w-0');
+    searchBox.classList.add('w-[300px]');
+
+    // ESCONDE MENU (forçado)
+    menu.style.display = 'none';
+
+    searchInput.focus();
+  } else {
+    // fecha busca
+    searchBox.classList.add('w-0');
+    searchBox.classList.remove('w-[300px]');
+
+    // MOSTRA MENU
+    menu.style.display = 'flex';
+  }
+};
+
+// clicar fora fecha
+document.addEventListener('click', (e) => {
+  if (open && !searchBox.contains(e.target) && e.target !== searchBtn) {
+    searchBox.classList.add('w-0');
+    searchBox.classList.remove('w-[300px]');
+    menu.style.display = 'flex';
+    open = false;
+  }
+});
+</script>
+<script>
+              document.addEventListener('DOMContentLoaded', function () {
+                const btn = document.getElementById('userMenuBtn');
+                const menu = document.getElementById('userDropdown');
+
+                // evita erro se não existir na página
+                if (!btn || !menu) return;
+
+                btn.addEventListener('click', function (e) {
+                  e.stopPropagation(); // evita fechar imediatamente
+                  menu.classList.toggle('hidden');
+                });
+
+                // fechar ao clicar fora
+                document.addEventListener('click', function (e) {
+                  if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                    menu.classList.add('hidden');
+                  }
+                });
+              });
+</script>
+
+     {% endblock %}

@@ -1,0 +1,124 @@
+
+{% block obras_em_destaque %}
+<section class="max-w-7xl mx-auto px-4 py-6">
+  <h3 class="text-base font-bold text-fire mb-3">⭐ Obras em Destaque</h3>
+
+  <!-- GRID ULTRA COMPACTO -->
+  <div class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2">
+
+    <!-- CARD -->
+    <div class="obra group cursor-pointer"
+         data-title="Attack on Titan"
+         data-tags="Ação, Drama, Mistério"
+         data-sinopse="Humanidade luta contra titãs gigantes que devoram pessoas.">
+
+      <div class="relative overflow-hidden rounded-md">
+        <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+             class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition duration-300">
+      </div>
+
+      <h4 class="text-[10px] font-semibold mt-1 truncate">Attack on Titan</h4>
+      <p class="text-[9px] text-fire">🔥 20k</p>
+    </div>
+
+    <!-- CARD -->
+    <div class="obra group cursor-pointer"
+         data-title="Jujutsu Kaisen"
+         data-tags="Ação, Sobrenatural"
+         data-sinopse="Um estudante entra no mundo das maldições após ingerir um objeto amaldiçoado.">
+
+      <div class="relative overflow-hidden rounded-md">
+        <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+             class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition duration-300">
+      </div>
+
+      <h4 class="text-[10px] font-semibold mt-1 truncate">Jujutsu Kaisen</h4>
+      <p class="text-[9px] text-fire">🔥 18k</p>
+    </div>
+
+    <!-- CARD -->
+    <div class="obra group cursor-pointer"
+         data-title="Demon Slayer"
+         data-tags="Ação, Histórico"
+         data-sinopse="Um jovem se torna caçador de demônios para salvar sua irmã.">
+
+      <div class="relative overflow-hidden rounded-md">
+        <img src="https://gqcanimes.com.br/wp-content/uploads/2021/11/Link-Click-GQCA-cp.png"
+             class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition duration-300">
+      </div>
+
+      <h4 class="text-[10px] font-semibold mt-1 truncate">Demon Slayer</h4>
+      <p class="text-[9px] text-fire">🔥 25k</p>
+    </div>
+
+    <!-- DUPLIQUE OS CARDS ACIMA -->
+    
+  </div>
+</section>
+
+<!-- TOOLTIP -->
+<div id="tooltip"
+     class="fixed z-50 hidden w-56 p-3 rounded-lg bg-gray-900/95 backdrop-blur text-white text-xs shadow-xl border border-gray-700 pointer-events-none transition-all duration-150">
+</div>
+
+<!-- SCRIPT -->
+<script>
+const tooltip = document.getElementById("tooltip");
+
+document.querySelectorAll(".obra").forEach(el => {
+
+  el.addEventListener("mouseenter", () => {
+    const title = el.dataset.title;
+    const tags = el.dataset.tags;
+    const sinopse = el.dataset.sinopse;
+
+    tooltip.innerHTML = `
+      <div class="text-xs font-bold mb-1">${title}</div>
+
+      <div class="flex flex-wrap gap-1 mb-1">
+        ${tags.split(',').map(tag =>
+          `<span class="bg-fire/20 text-fire px-1 py-[1px] rounded text-[9px]">${tag.trim()}</span>`
+        ).join('')}
+      </div>
+
+      <div class="text-gray-300 text-[10px] leading-tight">
+        ${sinopse}
+      </div>
+    `;
+
+    tooltip.classList.remove("hidden");
+    tooltip.classList.add("opacity-0");
+
+    setTimeout(() => {
+      tooltip.classList.remove("opacity-0");
+    }, 10);
+  });
+
+  el.addEventListener("mousemove", (e) => {
+    const offset = 15;
+
+    let x = e.clientX + offset;
+    let y = e.clientY + offset;
+
+    const rect = tooltip.getBoundingClientRect();
+
+    if (x + rect.width > window.innerWidth) {
+      x = e.clientX - rect.width - offset;
+    }
+
+    if (y + rect.height > window.innerHeight) {
+      y = e.clientY - rect.height - offset;
+    }
+
+    tooltip.style.left = x + "px";
+    tooltip.style.top = y + "px";
+  });
+
+  el.addEventListener("mouseleave", () => {
+    tooltip.classList.add("hidden");
+  });
+
+});
+</script>
+
+{% endblock %}

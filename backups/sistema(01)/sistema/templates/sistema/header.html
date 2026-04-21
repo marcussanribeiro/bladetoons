@@ -1,0 +1,51 @@
+        {% block content %}
+
+<header class="bg-black/80 backdrop-blur border-b border-gray-800 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-2">
+  <img src="/media/imagens_layout/bladetoons-logo.png" 
+       alt="Bladetoons" 
+       class="h-8 md:h-10 object-contain">
+</div>
+
+    <!-- MENU -->
+    <nav class="hidden md:flex space-x-6 text-sm">
+      <a href="#" class="hover:text-fire">Home</a>
+      <a href="#" class="hover:text-fire">Obras</a>
+      <a href="#" class="hover:text-fire">Trending</a>
+      <a href="#" class="hover:text-fire">VIP</a>
+      <a href="#" class="hover:text-fire">Loja</a>
+    </nav>
+
+    <!-- AÇÕES -->
+    <div class="flex items-center gap-3">
+      <!-- BUSCA -->
+      <div class="relative hidden md:block">
+        <input type="text" placeholder="Buscar..." class="bg-gray-900 text-sm px-3 py-1.5 rounded-lg focus:outline-none">
+        <span class="absolute right-2 top-1.5 text-gray-400">🔍</span>
+      </div>
+
+      <button id="menuBtn" class="md:hidden text-fire">☰</button>
+
+      <a href="#" class="border border-fire px-3 py-1.5 rounded-lg text-xs md:text-sm hover:bg-fire hover:text-black transition">
+        Registrar
+      </a>
+
+      <a href="#" class="bg-fire px-3 py-1.5 rounded-lg text-xs md:text-sm hover:opacity-80">
+        Login
+      </a>
+    </div>
+  </div>
+
+  <!-- MOBILE MENU -->
+  <div id="mobileMenu" class="hidden md:hidden px-4 pb-4 space-y-2">
+    <input type="text" placeholder="Buscar..." class="w-full bg-gray-900 px-3 py-2 rounded-lg text-sm">
+    <a href="#" class="block py-2">Home</a>
+    <a href="#" class="block py-2">Obras</a>
+    <a href="#" class="block py-2">Trending</a>
+    <a href="#" class="block py-2">VIP</a>
+    <a href="#" class="block py-2">Loja</a>
+  </div>
+</header>
+
+     {% endblock %}
