@@ -58,13 +58,28 @@ class Capitulo(models.Model):
     volume = models.ForeignKey(Volume, on_delete=models.CASCADE, related_name='capitulos')
     titulo = models.CharField(max_length=200)
     numero = models.IntegerField()
-    pdf = models.FileField(upload_to='capitulos/')
 
     # 🔥 contador de visualização
     visualizacoes = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.volume.anime.titulo} - Cap {self.numero}"
+
+    def total_paginas(self):
+        return self.paginas.count()
+
+class Pagina(models.Model):
+    capitulo = models.ForeignKey(Capitulo, on_delete=models.CASCADE, related_name='paginas')
+
+    imagem = models.ImageField(upload_to='capitulos_paginas/')
+    numero = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ['numero']
+        unique_together = ('capitulo', 'numero')
+
+    def __str__(self):
+        return f"{self.capitulo.titulo} - Página {self.numero}"
     
 
 class CapituloLido(models.Model):
@@ -75,3 +90,5 @@ class CapituloLido(models.Model):
 
     class Meta:
         unique_together = ('user', 'capitulo')
+
+

@@ -7,7 +7,7 @@ import os
 from django.shortcuts import render, get_object_or_404
 from frontend.models import UsuarioCustom
 from django.http import JsonResponse
-from backend.model.model_anime import CapituloLido
+from backend.model.model_anime import CapituloLido, Capitulo
 from django.db.models import F
 
 
@@ -47,10 +47,18 @@ def ver_pdf(request, nome_arquivo):
         'anime': anime
     })"""
 
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.db.models import Prefetch
+
 def obra_api(request, slug):
 
     anime = get_object_or_404(
-        Anime.objects.prefetch_related('volumes__capitulos'),
+        Anime.objects.prefetch_related(
+            Prefetch(
+                'volumes__capitulos__paginas'
+            )
+        ),
         slug=slug
     )
 
@@ -60,16 +68,12 @@ def obra_api(request, slug):
 
     if usuario_id:
         lidos = set(
-            int(x) for x in CapituloLido.objects.filter(
+            CapituloLido.objects.filter(
                 user_id=usuario_id,
                 lido=True,
                 capitulo__volume__anime=anime
             ).values_list('capitulo_id', flat=True)
         )
-
-    total_capitulos = sum(
-        v.capitulos.count() for v in anime.volumes.all()
-    )
 
     volumes_data = []
 
@@ -83,9 +87,12 @@ def obra_api(request, slug):
                 'id': cap.id,
                 'numero': cap.numero,
                 'titulo': cap.titulo,
+
+                # 🔥 adiciona quantidade de páginas (leve pro frontend)
+                'total_paginas': cap.paginas.count(),
             }
 
-            # 🔥 só adiciona se estiver logado
+            # 🔥 lido só se logado
             if usuario_id:
                 cap_data['lido'] = cap.id in lidos
 
@@ -103,7 +110,26 @@ def obra_api(request, slug):
         'slug': anime.slug,
         'descricao': anime.descricao,
         'capa': anime.imagem.url if anime.imagem else None,
-        'total_capitulos': total_capitulos,
+        'total_capitulos': sum(len(v['capitulos']) for v in volumes_data),
         'volumes': volumes_data,
+    })
+
+
+def paginas_capitulo(request, capitulo_id):
+
+    cap = get_object_or_404(
+        Capitulo.objects.prefetch_related('paginas'),
+        id=capitulo_id
+    )
+
+    paginas = [
+        pagina.imagem.url
+        for pagina in cap.paginas.all()
+    ]
+
+    return JsonResponse({
+        'id': cap.id,
+        'titulo': cap.titulo,
+        'paginas': paginas
     })
 

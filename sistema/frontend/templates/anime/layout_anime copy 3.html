@@ -199,66 +199,20 @@
   </div>
 </div>
 
-<style>
-.custom-scroll::-webkit-scrollbar {
-  width: 8px;
-}
-.custom-scroll::-webkit-scrollbar-track {
-  background: #111;
-}
-.custom-scroll::-webkit-scrollbar-thumb {
-  background: #444;
-  border-radius: 10px;
-}
-.custom-scroll::-webkit-scrollbar-thumb:hover {
-  background: #666;
-}
-</style>
-
-<!-- 🔥 LEITOR -->
 <!-- 🔥 LEITOR -->
 <div id="readerModal"
-  class="fixed inset-0 bg-black hidden z-50 flex">
+  class="fixed inset-0 bg-black hidden z-50 flex flex-col">
 
-  <!-- 📚 SIDEBAR -->
-  <div id="readerSidebar"
-    class="relative w-64 bg-gray-900 border-r border-gray-800 p-4 flex flex-col gap-4 transition-all duration-300">
+  <div class="flex justify-between items-center p-4 border-b border-gray-800">
+    <h2 id="readerTitle" class="text-white font-bold"></h2>
 
-    <!-- botão esconder sidebar -->
-    <button id="toggleSidebar"
-      class="absolute top-2 right-2 text-xs bg-black/60 px-2 py-1 rounded text-white hover:bg-black z-50">
-      ◀
+    <button id="closeReader" class="text-gray-400 hover:text-white text-xl">
+      ✖
     </button>
-
-    <h2 id="readerTitle" class="text-white font-bold text-sm"></h2>
-
-    <div class="flex flex-col gap-2 text-xs text-gray-300">
-      <label>🌙 Brilho</label>
-      <input id="brightnessControl" type="range" min="0.5" max="1.5" step="0.1" value="1">
-    </div>
-
-    <div class="flex flex-col gap-2 text-xs text-gray-300">
-      <label>🔍 Zoom</label>
-      <input id="zoomControl" type="range" min="0.5" max="2" step="0.1" value="1">
-    </div>
-
   </div>
 
-  <!-- 🔥 BOTÃO FECHAR -->
-  <button id="closeReader"
-    class="absolute top-4 right-4 text-gray-300 hover:text-white text-xl z-50">
-    ✖
-  </button>
-
-  <!-- 📌 BOTÃO REABRIR SIDEBAR (IMPORTANTE) -->
-  <button id="openSidebar"
-    class="absolute top-4 left-2 bg-black/70 text-white px-2 py-1 rounded hidden z-50">
-    ☰
-  </button>
-
-  <!-- 📖 CONTEÚDO -->
   <div id="readerContainer"
-    class="flex-1 overflow-y-auto flex flex-col items-center gap-4 p-4 transition-all duration-300">
+    class="flex-1 overflow-y-auto flex flex-col items-center gap-4 p-4">
   </div>
 
 </div>
@@ -270,28 +224,30 @@
 {% include 'base/footer.html' %}
 <!-- ================= SCRIPTS ================= -->
 
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-  // =========================
-  // 🔒 BLOQUEIOS BÁSICOS
-  // =========================
+  // bloqueia global
   document.addEventListener('contextmenu', e => e.preventDefault());
 
-  document.addEventListener('keydown', function (e) {
+  // bloqueia teclas comuns
+  document.addEventListener('keydown', function(e) {
+
     if (e.key === 'F12') e.preventDefault();
-    if (e.ctrlKey && ['u','s','p'].includes(e.key.toLowerCase())) {
+
+    if (e.ctrlKey && ['u', 's', 'p'].includes(e.key.toLowerCase())) {
       e.preventDefault();
     }
+
   });
 
-  // =========================
-  // ELEMENTOS
-  // =========================
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
   const modal = document.getElementById('volumesModal');
   const container = document.getElementById('volumesContainer');
-
   const readerModal = document.getElementById('readerModal');
   const readerContainer = document.getElementById('readerContainer');
   const readerTitle = document.getElementById('readerTitle');
@@ -300,184 +256,92 @@ document.addEventListener('DOMContentLoaded', function () {
   const closeBtn = document.getElementById('closeVolumesModal');
   const closeReader = document.getElementById('closeReader');
 
-  const sidebar = document.getElementById('readerSidebar');
-  const toggleSidebar = document.getElementById('toggleSidebar');
-  const openSidebar = document.getElementById('openSidebar');
+  const slug = modal.dataset.animeSlug;
 
-  const brightnessControl = document.getElementById('brightnessControl');
-  const zoomControl = document.getElementById('zoomControl');
+  // 🔓 abrir modal
+  openBtn?.addEventListener('click', async () => {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
 
-  const slug = modal?.dataset?.animeSlug;
-
-  // =========================
-  // ESTADO
-  // =========================
-  let zoom = 1;
-  let brightness = 1;
-  let sidebarOpen = true;
-
-  // =========================
-  // SIDEBAR CONTROL (ROBUSTO)
-  // =========================
-  function abrirSidebar() {
-    sidebarOpen = true;
-
-    sidebar.style.width = "16rem";
-    sidebar.style.padding = "1rem";
-    sidebar.style.overflow = "visible";
-
-    toggleSidebar?.classList.remove('hidden');
-    openSidebar?.classList.add('hidden');
-  }
-
-  function fecharSidebar() {
-    sidebarOpen = false;
-
-    sidebar.style.width = "0px";
-    sidebar.style.padding = "0px";
-    sidebar.style.overflow = "hidden";
-
-    toggleSidebar?.classList.add('hidden');
-    openSidebar?.classList.remove('hidden');
-  }
-
-  toggleSidebar?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    fecharSidebar();
+    await carregarAnime(slug);
   });
 
-  openSidebar?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    abrirSidebar();
-  });
-
-  // estado inicial
-  if (sidebar) abrirSidebar();
-
-  // =========================
-  // FECHAR READER
-  // =========================
-  closeReader?.addEventListener('click', () => {
-    readerModal.classList.add('hidden');
-    readerContainer.innerHTML = '';
-    document.body.classList.remove('overflow-hidden');
-  });
-
-  // =========================
-  // FECHAR MODAL VOLUMES
-  // =========================
+  // 🔒 fechar modal
   function fecharModal() {
-    modal?.classList.add('hidden');
-    modal?.classList.remove('flex');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
     document.body.classList.remove('overflow-hidden');
   }
 
   closeBtn?.addEventListener('click', fecharModal);
 
-  modal?.addEventListener('click', (e) => {
+  modal.addEventListener('click', (e) => {
     if (e.target === modal) fecharModal();
   });
 
-  // =========================
-  // CONTROLES (ZOOM / BRILHO)
-  // =========================
-  function atualizarEstilo() {
-    readerContainer?.querySelectorAll('img').forEach(img => {
-      img.style.transform = `scale(${zoom})`;
-      img.style.filter = `brightness(${brightness})`;
-      img.style.transformOrigin = "top center";
-    });
-  }
-
-  brightnessControl?.addEventListener('input', () => {
-    brightness = brightnessControl.value;
-    atualizarEstilo();
+  // 🔒 fechar leitor
+  closeReader.addEventListener('click', () => {
+    readerModal.classList.add('hidden');
+    readerContainer.innerHTML = '';
+    document.body.classList.remove('overflow-hidden');
   });
 
-  zoomControl?.addEventListener('input', () => {
-    zoom = zoomControl.value;
-    atualizarEstilo();
-  });
-
-  // =========================
-  // ABRIR MODAL VOLUMES
-  // =========================
-  openBtn?.addEventListener('click', async () => {
-
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-    document.body.classList.add('overflow-hidden');
-
-    if (slug) await carregarAnime(slug);
-  });
-
-  // =========================
-  // CARREGAR ANIME
-  // =========================
+  // 🔥 carregar anime
   async function carregarAnime(slug) {
 
     container.innerHTML = 'Carregando...';
 
-    try {
-      const res = await fetch(`/api/anime/${slug}/`);
-      const data = await res.json();
+    const response = await fetch(`/api/anime/${slug}/`);
+    const data = await response.json();
 
-      container.innerHTML = '';
+    container.innerHTML = '';
 
-      data.volumes.forEach(volume => {
+    data.volumes.forEach(volume => {
 
-        const volumeDiv = document.createElement('div');
-        volumeDiv.className = "border border-gray-800 rounded-xl overflow-hidden";
+      const volumeDiv = document.createElement('div');
+      volumeDiv.className = "border border-gray-800 rounded-xl overflow-hidden";
 
-        volumeDiv.innerHTML = `
-          <button class="volume-toggle w-full text-left px-4 py-3 bg-black/50 flex justify-between">
-            <span>Volume ${volume.numero}</span>
-            <span class="text-xs text-gray-400">${volume.capitulos.length} capítulos</span>
+      volumeDiv.innerHTML = `
+        <button class="volume-toggle w-full text-left px-4 py-3 bg-black/50 flex justify-between">
+          <span>Volume ${volume.numero}</span>
+          <span class="text-xs text-gray-400">${volume.capitulos.length} capítulos</span>
+        </button>
+        <div class="hidden px-4 py-3 space-y-2"></div>
+      `;
+
+      const content = volumeDiv.querySelector('div');
+
+      volume.capitulos.forEach(cap => {
+
+        const capDiv = document.createElement('div');
+        capDiv.className = "flex justify-between items-center bg-black/30 px-3 py-2 rounded-lg";
+
+        capDiv.innerHTML = `
+          <span class="text-sm cursor-pointer hover:text-fire open-reader"
+            data-id="${cap.id}"
+            data-titulo="${cap.titulo}">
+            Cap ${cap.numero} - ${cap.titulo}
+          </span>
+
+          <button data-id="${cap.id}"
+            class="toggle-lido text-xs px-3 py-1 rounded-lg
+            ${cap.lido ? 'bg-green-500 text-black' : 'bg-gray-700'}">
+            ✓
           </button>
-          <div class="hidden px-4 py-3 space-y-2"></div>
         `;
 
-        const content = volumeDiv.querySelector('div');
-
-        volume.capitulos.forEach(cap => {
-
-          const capDiv = document.createElement('div');
-          capDiv.className = "flex justify-between items-center bg-black/30 px-3 py-2 rounded-lg";
-
-          capDiv.innerHTML = `
-            <span class="text-sm cursor-pointer open-reader"
-              data-id="${cap.id}"
-              data-titulo="${cap.titulo}">
-              Cap ${cap.numero} - ${cap.titulo}
-            </span>
-
-            <button data-id="${cap.id}"
-              class="toggle-lido text-xs px-3 py-1 rounded-lg
-              ${cap.lido ? 'bg-green-500 text-black' : 'bg-gray-700'}">
-              ✓
-            </button>
-          `;
-
-          content.appendChild(capDiv);
-        });
-
-        container.appendChild(volumeDiv);
+        content.appendChild(capDiv);
       });
 
-    } catch (err) {
-      console.error(err);
-      container.innerHTML = 'Erro ao carregar.';
-    }
+      container.appendChild(volumeDiv);
+    });
   }
 
-  // =========================
-  // EVENTOS GLOBAIS
-  // =========================
+  // 🔥 EVENTOS
   document.addEventListener('click', async function (e) {
 
-    // 📂 volume
+    // 📂 abrir volume
     if (e.target.closest('.volume-toggle')) {
       const btn = e.target.closest('.volume-toggle');
       const content = btn.nextElementSibling;
@@ -489,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
       content.classList.toggle('hidden');
     }
 
-    // 📖 leitor
+    // 📖 abrir leitor (🔥 CORRIGIDO)
     if (e.target.closest('.open-reader')) {
 
       const el = e.target.closest('.open-reader');
@@ -498,28 +362,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
       readerTitle.innerText = titulo;
       readerModal.classList.remove('hidden');
-      document.body.classList.add('overflow-hidden');
-
       readerContainer.innerHTML = 'Carregando...';
 
       try {
         const url = "{% url 'anime:revista' 0 %}".replace('0', capId);
-        const response = await fetch(url);
+
+        const response = await fetch(url); // 🔥 FALTAVA ISSO
         const data = await response.json();
 
         readerContainer.innerHTML = '';
 
+        if (!data.paginas || data.paginas.length === 0) {
+          readerContainer.innerHTML = 'Sem páginas.';
+          return;
+        }
+
         data.paginas.forEach(src => {
           const img = document.createElement('img');
+
           img.src = src;
-          img.className = "max-w-full rounded-lg select-none";
-          img.draggable = false;
+          img.className = "max-w-full rounded-lg";
+          img.setAttribute('draggable', 'false');
           img.style.pointerEvents = 'none';
 
           readerContainer.appendChild(img);
         });
-
-        atualizarEstilo();
 
       } catch (err) {
         console.error(err);
@@ -533,7 +400,9 @@ document.addEventListener('DOMContentLoaded', function () {
       const btn = e.target.closest('.toggle-lido');
       const capId = btn.dataset.id;
 
-      const res = await fetch(`/marcar-lido/${capId}/`, {
+      if (btn.disabled) return;
+
+      const response = await fetch(`{% url 'dashboard_cliente:marcar_lido' 0 %}`.replace('0', capId), {
         method: 'POST',
         headers: {
           'X-CSRFToken': getCookie('csrftoken'),
@@ -541,10 +410,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
 
-      const data = await res.json();
+      const data = await response.json();
 
-      if (data.status === 'ok') {
-        btn.classList.add('bg-green-500','text-black');
+      if (data.status === 'ok' || data.status === 'ja_marcado') {
+        btn.classList.add('bg-green-500', 'text-black');
         btn.classList.remove('bg-gray-700');
         btn.disabled = true;
       }
@@ -552,17 +421,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
   });
 
-  // =========================
-  // CSRF
-  // =========================
+  // 🔐 CSRF
   function getCookie(name) {
     let cookieValue = null;
-    document.cookie.split(';').forEach(cookie => {
-      cookie = cookie.trim();
-      if (cookie.startsWith(name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-      }
-    });
+    if (document.cookie) {
+      document.cookie.split(';').forEach(cookie => {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        }
+      });
+    }
     return cookieValue;
   }
 
