@@ -1,5 +1,6 @@
         {% block content %}
 {% load static %}
+{% load permissoes %}
 
 
 
@@ -98,6 +99,13 @@
           <!-- DROPDOWN -->
           <div id="userDropdown"
                class="hidden absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
+
+               {% if user|tem_permissao:"acessar_dashboard_admin" %}
+            <a href="{% url 'dashboard_cliente:logout' %}"
+               class="block px-4 py-2 text-sm hover:bg-gray-800 hover:text-fire transition">
+              Dashboard Admin
+            </a>
+{% endif %}
 
             <a href="{% url 'dashboard_cliente:logout' %}"
                class="block px-4 py-2 text-sm hover:bg-gray-800 hover:text-fire transition">
@@ -234,16 +242,25 @@ document.addEventListener('DOMContentLoaded', function () {
               if (!data.results.length) {
                   resultsBox.innerHTML = `<div class="text-gray-400">Nada encontrado</div>`;
               } else {
-                  resultsBox.innerHTML = data.results.map(anime => `
-                      <a href="/obra/${anime.slug}/"
-                         class="flex items-center gap-3 p-3 hover:bg-gray-800 rounded-lg">
+                const resultados = data.results.slice(0, 10);
+                
+                  resultsBox.innerHTML = `
+                    <div class="grid grid-cols-5 gap-3">
+                      ${resultados.map(anime => `
+                        <a href="/obra/${anime.slug}/"
+                          class="flex flex-col items-center gap-2 p-2 hover:bg-gray-800 rounded-lg">
 
-                          <img src="${anime.imagem || '/static/img/default.png'}"
-                               class="w-12 h-16 object-cover rounded">
+                            <img src="${anime.imagem || '/static/img/default.png'}"
+                                class="w-20 h-28 object-cover rounded">
 
-                          <span class="text-white">${anime.titulo}</span>
-                      </a>
-                  `).join("");
+                            <span class="text-white text-xs text-center line-clamp-2">
+                              ${anime.titulo}
+                            </span>
+
+                        </a>
+                      `).join("")}
+                    </div>
+                  `;
               }
 
           } catch {

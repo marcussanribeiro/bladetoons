@@ -10,27 +10,18 @@ from django.http import HttpResponseForbidden
 
 
 
-"""@login_required_custom
-def dashboard(request):
-    user_id = request.session.get('user_id')
-
-    if user_id:
-        user = UsuarioCustom.objects.get(id=user_id)
-        context = {'user': user}
-        return render(request, 'dashboard_cliente/dashboard/dashboard.html', context)"""
-
 @login_required_custom
-def dashboard(request):
+def dashboard_admin(request):
     user_id = request.session.get('user_id')
 
     if not user_id:
-        return redirect('login')  # segurança extra
+        return redirect('login')
 
     user = UsuarioCustom.objects.get(id=user_id)
 
     # 🔒 VERIFICA PERMISSÃO
-    #if not user.tem_permissao('acessar_dashboard_admin1'):
-        #return HttpResponseForbidden('Você não tem permissão para acessar o dashboard.')
+    if not user.tem_permissao('acessar_dashboard_admin'):
+        return HttpResponseForbidden('Você não tem permissão para acessar o dashboard.')
 
     context = {'user': user}
     return render(request, 'dashboard_cliente/dashboard/dashboard.html', context)
@@ -42,7 +33,7 @@ def logout(request):
 
 
 
-@require_POST
+"""@require_POST
 def marcar_lido(request, capitulo_id):
 
     user_id = request.session.get('user_id')
@@ -78,4 +69,6 @@ def marcar_lido(request, capitulo_id):
 
     return JsonResponse({
         'status': 'ok'
-    })
+    })"""
+
+

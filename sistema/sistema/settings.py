@@ -55,6 +55,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'backend.context_processors.usuario_logado',
             ],
         },
     },

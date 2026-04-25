@@ -1,15 +1,27 @@
 from django.contrib import admin
-from backend.model.model_accounts import UsuarioCustom
+from backend.model.model_accounts import UsuarioCustom, Grupo, Permissao
 from backend.model.model_anime import CapituloLido
 
+
+@admin.register(Permissao)
+class PermissaoAdmin(admin.ModelAdmin):
+    list_display = ('nome',)
+    search_fields = ('nome',)
+
+
+@admin.register(Grupo)
+class GrupoAdmin(admin.ModelAdmin):
+    list_display = ('nome',)
+    filter_horizontal = ('permissoes',)  # 🔥 MUITO IMPORTANTE
 
 @admin.register(UsuarioCustom)
 class UsuarioCustomAdmin(admin.ModelAdmin):
 
     list_display = ('username', 'email', 'vip', 'created_at')
     list_filter = ('vip',)
+    search_fields = ('username', 'email')
 
-    search_fields = ('username', 'email')  # 👈 ESSENCIAL
+    filter_horizontal = ('grupos',)  # 🔥 ESSENCIAL
 
     fieldsets = (
         ('Informações Básicas', {

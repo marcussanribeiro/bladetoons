@@ -5,6 +5,8 @@ from backend.model.model_anime import (
     Anime, Genero, Volume, Capitulo, Pagina
 )
 
+from django.core.exceptions import ValidationError
+
 # =========================================================
 # 🖼 PÁGINAS (INLINE DO CAPÍTULO)
 # =========================================================
@@ -22,6 +24,10 @@ class CapituloInline(admin.TabularInline):
     extra = 0
     fields = ('numero', 'titulo', 'visualizacoes')
     readonly_fields = ('visualizacoes',)
+
+    def clean(self):
+        if Capitulo.objects.filter(volume=self.volume, numero=self.numero).exists():
+            raise ValidationError('Já existe um capítulo com esse número neste volume.')
 
 
 # =========================================================

@@ -43,24 +43,23 @@ class UsuarioCustom(models.Model):
     senha = models.CharField(max_length=255)
     vip = models.BooleanField(default=False)
 
-    grupos = models.ManyToManyField(Grupo, blank=True)  # 👈 AQUI
+    grupos = models.ManyToManyField('Grupo', blank=True)
 
     created_at = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
         # Só criptografa se não estiver criptografada ainda
-        if not self.senha.startswith('pbkdf2_'):
+        if self.senha and not self.senha.startswith('pbkdf2_'):
             self.senha = make_password(self.senha)
         super().save(*args, **kwargs)
 
     def check_senha(self, raw_password):
         return check_password(raw_password, self.senha)
-    
+
     def tem_permissao(self, permissao_nome):
         return self.grupos.filter(permissoes__nome=permissao_nome).exists()
 
     def __str__(self):
         return self.username
-    
 
 

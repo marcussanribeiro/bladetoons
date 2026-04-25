@@ -14,7 +14,7 @@ class Genero(models.Model):
 
 
 class Anime(models.Model):
-    titulo = models.CharField(max_length=200)
+    titulo = models.CharField(max_length=200, unique=True)
     descricao = models.TextField()
     imagem = models.ImageField(upload_to='animes/', null=True, blank=True)
     generos = models.ManyToManyField(Genero, related_name='animes', null=True)
@@ -49,7 +49,7 @@ class Anime(models.Model):
 
 class Volume(models.Model):
     anime = models.ForeignKey(Anime, on_delete=models.CASCADE, related_name='volumes')
-    numero = models.IntegerField()
+    numero = models.IntegerField(unique=True)
 
     def __str__(self):
         return f"{self.anime.titulo} - Volume {self.numero}"
@@ -60,11 +60,13 @@ class Capitulo(models.Model):
     titulo = models.CharField(max_length=200)
     numero = models.IntegerField()
 
-    # 🔥 contador de visualização
     visualizacoes = models.PositiveIntegerField(default=0)
 
+    class Meta:
+        unique_together = ('volume', 'numero')  # 🔥 REGRA QUE VOCÊ QUER
+
     def __str__(self):
-        return f"{self.volume.anime.titulo} - Cap {self.numero}"
+        return f"{self.volume.anime.titulo} - Vol {self.volume.numero} Cap {self.numero}"
 
     def total_paginas(self):
         return self.paginas.count()
