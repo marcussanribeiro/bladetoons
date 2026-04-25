@@ -13,6 +13,8 @@ from django.db.models import Sum
 from backend.model.model_accounts import UsuarioCustom
 from backend.model.model_anime import Anime
 from django.utils import timezone
+from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 """def home(request):
@@ -56,7 +58,7 @@ from django.utils import timezone
         'slides': slides
     })"""
 
-def home(request):
+"""def home(request):
     # 👤 USUÁRIO
     user = UsuarioCustom.objects.filter(
         id=request.session.get('user_id')
@@ -142,9 +144,116 @@ def home(request):
         'recentes': recentes,
         'animes_normal': animes_normal,
         'slides': slides
+    })"""
+
+
+
+def home(request):
+
+    user = UsuarioCustom.objects.filter(
+        id=request.session.get('user_id')
+    ).first()
+
+    # =========================
+    # BASE
+    # =========================
+    base = Anime.objects.prefetch_related(
+        'generos',
+        'volumes__capitulos'
+    )
+
+    trending_qs = base.annotate(
+        total_views=Sum('volumes__capitulos__visualizacoes')
+    ).order_by('-total_views')
+
+    # =========================
+    # API TRENDING (CORRIGIDA)
+    # =========================
+    if request.GET.get("api") == "trending":
+
+        page = request.GET.get("trend_page", 1)
+        paginator = Paginator(trending_qs, 39)
+        page_obj = paginator.get_page(page)
+
+        return JsonResponse({
+            "results": [
+                {
+                    "id": a.id,
+                    "titulo": a.titulo,
+                    "slug": a.slug,
+                    "imagem": a.imagem.url if a.imagem else "",
+                    "views": a.total_views or 0,
+                    "descricao": a.descricao or "",  # 🔥 IMPORTANTE
+                    "generos": [g.nome for g in a.generos.all()]  # 🔥 IMPORTANTE
+                }
+                for a in page_obj
+            ],
+            "page": page_obj.number,
+            "num_pages": paginator.num_pages,
+            "has_next": page_obj.has_next(),
+            "has_previous": page_obj.has_previous(),
+        })
+
+    # =========================
+    # GRID PAGINATION
+    # =========================
+    animes = Paginator(
+        base.order_by('-criado_em'),
+        30
+    ).get_page(request.GET.get('page'))
+
+    # =========================
+    # TRENDING HTML PAGINADO
+    # =========================
+    animes_normal = Paginator(
+        trending_qs,
+        30
+    ).get_page(request.GET.get('trend_page', 1))
+
+    # =========================
+    # SELECIONADO
+    # =========================
+    anime_selecionado = base.filter(
+        slug=request.GET.get('anime')
+    ).first() if request.GET.get('anime') else None
+
+    # =========================
+    # RECENTES
+    # =========================
+    recentes = base.order_by('-atualizado_em')[:20]
+
+    # =========================
+    # SLIDES (CORRIGIDO)
+    # =========================
+    hoje = timezone.now().date()
+    cache = request.session.get('slides_cache', {})
+
+    if cache.get('data') == str(hoje):
+        slides = Anime.objects.filter(id__in=cache.get('ids', []))
+
+    else:
+        populares = trending_qs[:5]
+        menos_vistos = trending_qs.order_by('total_views')[:5]
+
+        ids = list({a.id for a in list(populares) + list(menos_vistos)})
+        ids = ids[:10]
+        random.shuffle(ids)
+
+        slides = Anime.objects.filter(id__in=ids)
+        request.session['slides_cache'] = {
+            'data': str(hoje),
+            'ids': ids
+        }
+
+    # =========================
+    return render(request, 'anime/layout.html', {
+        'user': user,
+        'animes': animes,
+        'animes_normal': animes_normal,
+        'anime_selecionado': anime_selecionado,
+        'recentes': recentes,
+        'slides': slides
     })
-
-
 def registrar(request):
     return render(request, 'login/registrar.html')
 

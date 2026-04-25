@@ -65,91 +65,9 @@
 
 
 
-
 <script>
 let currentTrendPage = 1;
 
-/* =========================
-   🧠 TOOLTIP GLOBAL (SEM SCROLL)
-========================= */
-document.addEventListener("DOMContentLoaded", () => {
-
-  const tooltip = document.getElementById("tooltip");
-
-  function bindTooltip(root = document) {
-
-    root.querySelectorAll(".obra").forEach(el => {
-
-      if (el.dataset.bound === "1") return;
-      el.dataset.bound = "1";
-
-      el.addEventListener("mouseenter", () => {
-
-        const title = el.dataset.title || "";
-        const tags = (el.dataset.tags || "")
-          .split(",")
-          .map(t => t.trim())
-          .filter(Boolean);
-
-        const sinopse = el.dataset.sinopse || "Sem sinopse disponível";
-
-        tooltip.innerHTML = `
-          <div class="text-xs font-bold mb-1">${title}</div>
-
-          <div class="flex flex-wrap gap-1 mb-0">
-            ${tags.length
-              ? tags.map(tag => `
-                  <span class="bg-fire/20 text-fire px-1 py-[1px] rounded text-[9px]">
-                    ${tag}
-                  </span>
-                `).join("")
-              : `<span class="text-[9px] text-gray-500">Sem gêneros</span>`
-            }
-          </div>
-
-<div class="text-gray-300 text-[10px] leading-snug break-words max-w-[260px] mt-0">
-  ${sinopse}
-</div>
-        `;
-
-        tooltip.classList.remove("hidden");
-      });
-
-      el.addEventListener("mousemove", (e) => {
-        const offset = 15;
-
-        let x = e.clientX + offset;
-        let y = e.clientY + offset;
-
-        const rect = tooltip.getBoundingClientRect();
-
-        if (x + rect.width > window.innerWidth) {
-          x = e.clientX - rect.width - offset;
-        }
-
-        if (y + rect.height > window.innerHeight) {
-          y = e.clientY - rect.height - offset;
-        }
-
-        tooltip.style.left = x + "px";
-        tooltip.style.top = y + "px";
-      });
-
-      el.addEventListener("mouseleave", () => {
-        tooltip.classList.add("hidden");
-      });
-
-    });
-  }
-
-  window.bindTooltip = bindTooltip;
-  bindTooltip();
-});
-
-
-/* =========================
-   🔥 TRENDING AJAX
-========================= */
 async function loadTrending(page) {
 
   const res = await fetch(`/?api=trending&trend_page=${page}`);
@@ -159,14 +77,16 @@ async function loadTrending(page) {
 
   box.innerHTML = data.results.map(anime => `
     <a href="/obra/${anime.slug}/"
-       class="obra w-[70px] sm:w-[80px] md:w-[90px] group block"
+       class="obra w-[70px] sm:w-[80px] md:w-[90px] group cursor-pointer block"
        data-title="${anime.titulo || ''}"
-       data-tags="${(anime.generos || []).join(', ')}"
-       data-sinopse="${(anime.descricao || '').replace(/"/g,'&quot;')}">
+       data-tags="${anime.generos ? anime.generos.join(', ') : ''}"
+       data-sinopse="${anime.descricao || ''}">
 
-      <div class="overflow-hidden rounded-md">
+      <div class="relative overflow-hidden rounded-md">
+
         <img src="${anime.imagem || '/static/img/default.png'}"
-             class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition">
+             class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition duration-300">
+
       </div>
 
       <h4 class="text-[10px] font-semibold mt-1 truncate text-center">
@@ -180,6 +100,9 @@ async function loadTrending(page) {
     </a>
   `).join("");
 
+  // 🔥 REATIVA TOOLTIP (ESSENCIAL)
+  ativarTooltip();
+
   currentTrendPage = data.page;
 
   document.getElementById("trendCounter").innerText =
@@ -187,26 +110,85 @@ async function loadTrending(page) {
 
   document.getElementById("prevTrend").disabled = !data.has_previous;
   document.getElementById("nextTrend").disabled = !data.has_next;
-
-  if (window.bindTooltip) {
-    bindTooltip(box);
-  }
 }
 
-
-/* =========================
-   🎮 INIT
-========================= */
-document.addEventListener("DOMContentLoaded", () => {
-
-  document.getElementById("nextTrend").onclick = () =>
-    loadTrending(currentTrendPage + 1);
-
-  document.getElementById("prevTrend").onclick = () =>
-    loadTrending(currentTrendPage - 1);
-
-  loadTrending(1);
+// eventos
+document.getElementById("nextTrend").addEventListener("click", () => {
+  loadTrending(currentTrendPage + 1);
 });
+
+document.getElementById("prevTrend").addEventListener("click", () => {
+  loadTrending(currentTrendPage - 1);
+});
+
+// init
+loadTrending(1);
+</script>
+<script>
+function ativarTooltip() {
+
+  const tooltip = document.getElementById("tooltip");
+
+  document.querySelectorAll(".obra").forEach(el => {
+
+    if (el.dataset.tooltipAtivo) return;
+    el.dataset.tooltipAtivo = "true";
+
+    el.addEventListener("mouseenter", () => {
+
+      const title = el.dataset.title || "";
+      const tags = el.dataset.tags || "";
+      const sinopse = el.dataset.sinopse || "";
+
+      tooltip.innerHTML = `
+        <div class="text-xs font-bold mb-1">${title}</div>
+
+        <div class="flex flex-wrap gap-1 mb-1">
+          ${tags
+            .split(',')
+            .filter(Boolean)
+            .map(tag => `
+              <span class="bg-fire/20 text-fire px-1 py-[1px] rounded text-[9px]">
+                ${tag.trim()}
+              </span>
+            `).join('')
+          }
+        </div>
+
+        <div class="text-gray-300 text-[10px] leading-tight">
+          ${sinopse}
+        </div>
+      `;
+
+      tooltip.classList.remove("hidden");
+    });
+
+    el.addEventListener("mousemove", (e) => {
+      const offset = 15;
+
+      let x = e.clientX + offset;
+      let y = e.clientY + offset;
+
+      const rect = tooltip.getBoundingClientRect();
+
+      if (x + rect.width > window.innerWidth) {
+        x = e.clientX - rect.width - offset;
+      }
+
+      if (y + rect.height > window.innerHeight) {
+        y = e.clientY - rect.height - offset;
+      }
+
+      tooltip.style.left = x + "px";
+      tooltip.style.top = y + "px";
+    });
+
+    el.addEventListener("mouseleave", () => {
+      tooltip.classList.add("hidden");
+    });
+
+  });
+}
 </script>
 </div>
 
@@ -237,13 +219,13 @@ document.addEventListener("DOMContentLoaded", () => {
         tooltip.innerHTML = `
           <div class="text-xs font-bold mb-1">${title}</div>
 
-          <div class="<div class="flex flex-wrap gap-1 mb-0.5">
+          <div class="flex flex-wrap gap-1 mb-1">
             ${tags.split(',').map(tag =>
               `<span class="bg-fire/20 text-fire px-1 py-[1px] rounded text-[9px]">${tag.trim()}</span>`
             ).join('')}
           </div>
 
-          <div class="text-gray-300 text-[10px] leading-snug break-words max-w-[260px] mt-0">
+          <div class="text-gray-300 text-[10px] leading-tight">
             ${sinopse}
           </div>
         `;
