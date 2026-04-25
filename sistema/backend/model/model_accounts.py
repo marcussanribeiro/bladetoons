@@ -4,8 +4,16 @@ from django.utils import timezone
 from django.contrib.auth.hashers import make_password, check_password
 #from backend.model.model_anime import Capitulo
 
+
+class Permissao(models.Model):
+    nome = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nome
+
 class Grupo(models.Model):
-    nome = models.CharField(max_length=50)
+    nome = models.CharField(max_length=100, unique=True)
+    permissoes = models.ManyToManyField(Permissao, blank=True)
 
     def __str__(self):
         return self.nome
@@ -33,9 +41,9 @@ class UsuarioCustom(models.Model):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
     senha = models.CharField(max_length=255)
-
-    entidade = models.CharField(max_length=100, null=True, blank=True)
     vip = models.BooleanField(default=False)
+
+    grupos = models.ManyToManyField(Grupo, blank=True)  # 👈 AQUI
 
     created_at = models.DateTimeField(default=timezone.now)
 
@@ -47,6 +55,9 @@ class UsuarioCustom(models.Model):
 
     def check_senha(self, raw_password):
         return check_password(raw_password, self.senha)
+    
+    def tem_permissao(self, permissao_nome):
+        return self.grupos.filter(permissoes__nome=permissao_nome).exists()
 
     def __str__(self):
         return self.username

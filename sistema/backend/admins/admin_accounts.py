@@ -5,17 +5,18 @@ from backend.model.model_anime import CapituloLido
 
 @admin.register(UsuarioCustom)
 class UsuarioCustomAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'entidade', 'vip', 'created_at')
-    search_fields = ('username', 'email')
-    list_filter = ('vip', 'entidade')
-    ordering = ('-created_at',)
+
+    list_display = ('username', 'email', 'vip', 'created_at')
+    list_filter = ('vip',)
+
+    search_fields = ('username', 'email')  # 👈 ESSENCIAL
 
     fieldsets = (
-        ('Dados do Usuário', {
+        ('Informações Básicas', {
             'fields': ('username', 'email', 'senha')
         }),
-        ('Configurações', {
-            'fields': ('entidade', 'vip')
+        ('Permissões', {
+            'fields': ('vip', 'grupos')
         }),
     )
 
@@ -40,6 +41,7 @@ class CapituloLidoAdmin(admin.ModelAdmin):
     search_fields = (
         'user__username',
         'capitulo__titulo',
+        
     )
 
     ordering = (

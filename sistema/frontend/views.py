@@ -7,6 +7,7 @@ from dashboard_cliente.views import dashboard
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
+import random
 
 
 def home(request):
@@ -33,12 +34,21 @@ def home(request):
     #  RECENTES (já ordenado)
     recentes = animes[:20]
 
+    ids = list(Anime.objects.exclude(imagem='').values_list('id', flat=True))
+
+    if ids:
+        random_ids = random.sample(ids, min(len(ids), 5))
+        slides = Anime.objects.filter(id__in=random_ids)
+    else:
+        slides = []
+
     return render(request, 'anime/layout.html', {
         'user': user,
         'animes': animes,
         'anime_selecionado': anime_selecionado,
         'recentes': recentes,
         'animes_normal': animes_normal,
+        'slides': slides
     })
 
 
