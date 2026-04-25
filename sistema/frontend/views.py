@@ -248,7 +248,7 @@ def home(request):
     # =========================
     return render(request, 'anime/layout.html', {
         'user': user,
-        'animes': animes,
+        'animes': trending_qs,
         'animes_normal': animes_normal,
         'anime_selecionado': anime_selecionado,
         'recentes': recentes,
